@@ -80,15 +80,19 @@ python -m pip install pycocotools
 3.  Add `protoc` executable to Environment Variable PATH then restart terminal. (Or you will need to replace every `protoc` call with `PATH_TO_PROTOC/protoc` later.)
 
 ### Compile protobuf models and parameters
-1.  Download `tensorflow/models/research` folder.
+1.  Download `tensorflow/models/research/object_detection` and `tensorflow/models/research/slim` folders.
 
-2.  Extract `research` folder so that the directory looks like:
+2.  Extract `object_detection` and `slim `folders so that the directory looks like:
     ```text
     Hello-Object-Detection
     |-- models
     |   |-- research
-    |       |-- setup.py
-    |       |-- ...
+    |       |-- object_detection
+    |           |-- model_main.py
+    |           |-- ...
+    |       |-- slim
+    |           |-- setup.py
+    |           |-- ...
     |-- main.py
     |-- ...
     ```
