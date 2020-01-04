@@ -55,8 +55,15 @@ async def main():
 
     # parse text to id
     class_list = []
+    tasks = []
 
-    def id_of_class(row_label):
+    async def csv_to_pbtxt():
+        with open(f'{tfrecord_path}/label_map.pbtxt', 'w') as f:
+            for i, name in enumerate(class_list):
+                f.write(f"item {{\n  id: {i + 1}\n  name: '{name}'\n}}\n")
+        del f, i, name
+
+    async def id_of_class(row_label):
         if not class_list:
             _classes = set()
             with open(csv_path) as f:
@@ -64,9 +71,10 @@ async def main():
                     _classes.add(row['class'])
             class_list.extend(_classes)
             del _classes
+            tasks.append(asyncio.create_task(csv_to_pbtxt()))
         return 1 + class_list.index(row_label)
 
-    def create_tf_example(group, path):
+    async def create_tf_example(group, path):
         print(os.path.join(path, '{}'.format(group.filename)))
         with tf.gfile.GFile(os.path.join(path, '{}'.format(group.filename)), 'rb') as fid:
             encoded_jpg = fid.read()
@@ -113,7 +121,8 @@ async def main():
             examples = pd.read_csv(csv_input)
             data = namedtuple('data', ['filename', 'object'])
             gb = examples.groupby('filename')
-            grouped = [data(filename, gb.get_group(x)) for filename, x in zip(gb.groups.keys(), gb.groups)]
+            grouped = [data(filename, gb.get_group(x)) for filename, x in
+                       zip(gb.groups.keys(), gb.groups)]
             for group in grouped:
                 tf_example = create_tf_example(group, img_path)
                 writer.write(tf_example.SerializeToString())
@@ -121,10 +130,11 @@ async def main():
         print('CSV -> TFRecord successful!')
         # print('Processed', xml_size, 'boxes in total!')
 
-    train_task = to_tfrecord(csv_path, f'{tfrecord_path}/train.record')
-    eval_task = to_tfrecord(csv_path, f'{tfrecord_path}/eval.record')
-    await train_task
-    await eval_task
+    tasks.append(to_tfrecord(csv_path, f'{tfrecord_path}/train.record'))
+    tasks.append(to_tfrecord(csv_path, f'{tfrecord_path}/eval.record'))
+
+    for task in tasks:
+        await task
 
 
 asyncio.run(main())

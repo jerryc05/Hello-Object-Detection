@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="03917fd1-a151-4115-b529-1e450ad1d980" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.github/workflows/pythonpackage.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/csv_to_tfrecord.py" beforeDir="false" afterPath="$PROJECT_DIR$/csv_to_tfrecord.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -108,7 +108,7 @@
       <workItem from="1578114041531" duration="2040000" />
       <workItem from="1578116102842" duration="591000" />
       <workItem from="1578116729261" duration="15445000" />
-      <workItem from="1578152229023" duration="5637000" />
+      <workItem from="1578152229023" duration="6681000" />
     </task>
     <servers />
   </component>
@@ -117,10 +117,10 @@
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state x="989" y="188" width="816" height="729" key="#Intentions/0.0.1920.1050@0.0.1920.1050" timestamp="1578143916745" />
-    <state x="220" y="172" width="998" height="719" key="SettingsEditor" timestamp="1578152298338">
+    <state x="220" y="172" width="998" height="719" key="SettingsEditor" timestamp="1578158046034">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
-    <state x="220" y="172" width="998" height="719" key="SettingsEditor/0.0.1920.1050@0.0.1920.1050" timestamp="1578152298338" />
+    <state x="220" y="172" width="998" height="719" key="SettingsEditor/0.0.1920.1050@0.0.1920.1050" timestamp="1578158046034" />
     <state x="1095" y="374" key="cloudConfig.PluginsDialog" timestamp="1578113914098">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
