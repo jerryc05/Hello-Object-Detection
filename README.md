@@ -1,5 +1,5 @@
 # Hello Object Detection
-This is a tutorial to help you setup Object Detection using `TensorFlow API 1.x`.
+This is a tutorial to help you setup Object Detection using `TensorFlow Object Detection API`.
 
 Author: [@jerryc05](<https://github.com/jerryc05>)
 
