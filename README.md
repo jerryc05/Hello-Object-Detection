@@ -140,10 +140,11 @@ The following path shall be appended to Environment Variable `PYTHONPATH`:
     
     Run the following command in shell from folder `./`:
     ```shell script
-    python csv_to_tfrecord.py -i __PATH_TO_CSV__ -o __PATH_TO_TFRECORD__
+    python csv_to_tfrecord.py -c __PATH_TO_CSV__ -i __PATH_TO_IMG__ -o __PATH_TO_TFRECORD__
     ```
     ***Note: change the following paths before running the script:***
     1.  `__PATH_TO_CSV__` <- path of csv file created by `xml_to_csv.py`. 
+    1.  `__PATH_TO_IMG__` <- path of image files. 
     2.  `__PATH_TO_TFRECORD__` <- path of TFRecord file that the script will create. 
 
 

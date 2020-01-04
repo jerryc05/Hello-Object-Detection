@@ -28,19 +28,17 @@ async def main():
     columns = ['filename', 'width', 'height', 'class', 'xmin', 'ymin', 'xmax', 'ymax']
 
     async def process_xml_file(path):
-        root = xmlETree.parse(path).getroot()
-        for box in root.findall('object'):
-            value = (
-                root.find('filename').text.strip(),  # filename
-                root.find('size')[0].text.strip(),  # width
-                root.find('size')[1].text.strip(),  # height
+        for box in xmlETree.parse(path).getroot().findall('object'):
+            xml_q.put_nowait((
+                xmlETree.parse(path).getroot().find('filename').text.strip(),  # filename
+                xmlETree.parse(path).getroot().find('size')[0].text.strip(),  # width
+                xmlETree.parse(path).getroot().find('size')[1].text.strip(),  # height
                 box[0].text.strip(),  # box.name/class
                 box[4][0].text.strip(),  # box.xmin
                 box[4][1].text.strip(),  # box.ymin
                 box[4][2].text.strip(),  # box.xmax
                 box[4][3].text.strip(),  # box.ymax
-            )
-            xml_q.put_nowait(value)
+            ))
 
     tasks = []
     for xml_file in glob.glob(f'{xml_path}/*.xml'):
