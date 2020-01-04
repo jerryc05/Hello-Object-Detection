@@ -1,8 +1,7 @@
-tensorflow-gpu<2
-Cython
 contextlib2
-pillow
+Cython
+labelImg
 lxml
 matplotlib
-label
-lebelImg
+pillow
+tensorflow-gpu>=1.4, <2

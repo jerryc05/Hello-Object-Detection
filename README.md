@@ -39,7 +39,7 @@ python -m pip install --user -r requirements.txt
 ### Setup COCO API
 *For latest setup process, please refer to the official site [cocodataset/cocoapi](<https://github.com/cocodataset/cocoapi>).*
 
-1.  Download `cocodataset/cocoapi/PythonAPI` and `cocodataset/cocoapi/common` folder.
+1.  Download `cocodataset/cocoapi/PythonAPI` and `cocodataset/cocoapi/common` folders.
 
 2.  Extract `PyhonAPI` and `common` folder so that the directory looks like:
     ```text
@@ -120,13 +120,25 @@ The following path shall be appended to Environment Variable `PYTHONPATH`:
 -   [tzutalin/labelImg](<https://github.com/tzutalin/labelImg>)
 
 ### Install labelImg
-*You should have this installed already via [1.2 Setup PyPi Libraries](#setup-pypi-libraries).*
+*You should have this installed already via [1.2) Setup PyPi Libraries](#setup-pypi-libraries).*
 
 ### Use labelImg
 *No Bullshit here, please refer to official site [tzutalin/labelImg](<https://github.com/tzutalin/labelImg>).*
 
-### Organize labels
-// todo
+### Parse labels
+1.  Parse labels from `xml` to `csv`:
+    
+    Run the following command in shell from folder `./`:
+    ```shell script
+    python xml_to_csv.py -i __PATH_TO_XML__ -o __PATH_TO_CSV__
+    ```
+    ***Note: change the following paths before running the script:***
+    1.  `__PATH_TO_XML__` <- path of xml labels created by `labelImg`. 
+    2.  `__PATH_TO_CSV__` <- path of csv that the script will create. 
+
+2.  Parse `csv` to `TFRecord`:
+
+
 
 
 

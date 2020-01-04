@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="03917fd1-a151-4115-b529-1e450ad1d980" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/xml_to_csv.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dictionaries/Jerry.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dictionaries/Jerry.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
@@ -10,6 +12,13 @@
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -31,9 +40,6 @@
       <module name="Hello-Object-Detection" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="false" />
@@ -87,11 +93,15 @@
       <workItem from="1578113942020" duration="14000" />
       <workItem from="1578114041531" duration="2040000" />
       <workItem from="1578116102842" duration="591000" />
-      <workItem from="1578116729261" duration="2382000" />
+      <workItem from="1578116729261" duration="13601000" />
     </task>
     <servers />
   </component>
   <component name="WindowStateProjectService">
+    <state x="989" y="188" width="816" height="729" key="#Intentions" timestamp="1578143916745">
+      <screen x="0" y="0" width="1920" height="1050" />
+    </state>
+    <state x="989" y="188" width="816" height="729" key="#Intentions/0.0.1920.1050@0.0.1920.1050" timestamp="1578143916745" />
     <state x="220" y="172" width="998" height="719" key="SettingsEditor" timestamp="1578108480450">
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
@@ -104,5 +114,17 @@
       <screen x="0" y="0" width="1920" height="1050" />
     </state>
     <state x="1095" y="374" key="cloudConfig.SelfSettingsDialog/0.0.1920.1050@0.0.1920.1050" timestamp="1578113908144" />
+    <state x="1045" y="126" width="607" height="804" key="find.popup" timestamp="1578134806604">
+      <screen x="0" y="0" width="1920" height="1050" />
+    </state>
+    <state x="1045" y="126" width="607" height="804" key="find.popup/0.0.1920.1050@0.0.1920.1050" timestamp="1578134806604" />
+    <state width="600" height="424" key="javadoc.popup" timestamp="1578148478341">
+      <screen x="0" y="0" width="1920" height="1050" />
+    </state>
+    <state width="600" height="424" key="javadoc.popup/0.0.1920.1050@0.0.1920.1050" timestamp="1578148478341" />
+    <state x="1060" y="233" width="672" height="678" key="search.everywhere.popup" timestamp="1578149039512">
+      <screen x="0" y="0" width="1920" height="1050" />
+    </state>
+    <state x="1060" y="233" width="672" height="678" key="search.everywhere.popup/0.0.1920.1050@0.0.1920.1050" timestamp="1578149039512" />
   </component>
 </project>
