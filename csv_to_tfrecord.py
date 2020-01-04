@@ -23,7 +23,7 @@ async def main():
     arg_parser.add_argument('-c', '--csv', required=True,
                             help='the path to folder containing input csv files.')
     arg_parser.add_argument('-i', '--img', required=True,
-                            help='the path to folder containing input csv files.')
+                            help='the path to folder containing image files.')
     arg_parser.add_argument('-o', '--output', required=True,
                             help='the path to folder containing output TFRecord file.')
     args = arg_parser.parse_args()
