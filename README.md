@@ -88,7 +88,7 @@ The following path shall be appended to Environment Variable `PYTHONPATH`:
 1.  `__PWD__/models/research`
 2.  `__PWD__/models/research/slim`
 
-***Note: change `__PWD__` to the absolute path of `Hello-Object-Detection` before changing `PYTHONPATH`!***
+***Note: change `__PWD__` to the absolute path of `Hello-Object-Detection` folder before touching `PYTHONPATH`!***
 
 ### Test Installation
 1.  Run the following command in shell from folder `./models/research`:
