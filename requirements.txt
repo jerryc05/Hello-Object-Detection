@@ -1,0 +1,6 @@
+tensorflow-gpu<2
+Cython
+contextlib2
+pillow
+lxml
+matplotlib
