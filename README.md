@@ -1,10 +1,22 @@
 # Hello Object Detection
 This is a tutorial to help you setup Object Detection using `TensorFlow API 1.x`.
 
+Author: [@jerryc05](<https://github.com/jerryc05>)
+
 *For latest setup process, please refer to the following sites:*
 -   [tensorflow/models/object_detection/g3doc/installation.md](<https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/installation.md>)
 -   [tensorflow/models/object_detection](<https://github.com/tensorflow/models/tree/master/research/object_detection>)
 -   [tensorflow/models](<https://github.com/tensorflow/models>)
+
+**Table of Contents:**
+1.  [Installation](#installation)
+    1.  [Setup Tensorflow-GPU](#setup-tensorflow-gpu)
+    2.  [Setup PyPi Libraries](#setup-pypi-libraries)
+    3.  [Setup COCO API](#setup-coco-api)
+    4.  [Install Protocol Buffer](#install-protocol-buffer)
+    5.  [Compile protobuf models and parameters](#compile-protobuf-models-and-parameters)
+    6.  [Add Libraries to PYTHONPATH](#add-libraries-to-pythonpath)
+    7.  [Test Installation](#test-installation)
 
 ## Installation
 
