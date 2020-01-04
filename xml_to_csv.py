@@ -1,8 +1,9 @@
-# An xml to vsc parser for labelImg.
+# An asyncio-powered xml to vsc parser for labelImg.
 # Author: @jerryc05 - https://github.com/jerryc05
 
 import argparse
 import asyncio
+import csv
 import glob
 import xml.etree.ElementTree as xmlETree
 
@@ -13,12 +14,12 @@ async def main():
                             help='the path to folder containing input xml files.')
     arg_parser.add_argument('-o', '--output', required=True,
                             help='the path to folder containing output csv file.')
-    parsed_args = arg_parser.parse_args()
+    args = arg_parser.parse_args()
 
-    xml_path: str = parsed_args.input.strip()
+    xml_path: str = args.input.strip()
     if xml_path.endswith('/') or xml_path.endswith('\\'):
         xml_path = xml_path[:-1]
-    csv_path: str = parsed_args.output.strip()
+    csv_path: str = args.output.strip()
     if csv_path.endswith('/') or csv_path.endswith('\\'):
         csv_path = csv_path[:-1]
 
@@ -51,27 +52,27 @@ async def main():
     xml_size = xml_q.qsize()
     if xml_size == 0:
         print('WARNING! No boxes processed!')
-        print(f'Please check your xml input path again: [{xml_path}]')
+        print(f'Please check your xml input path again: [{xml_path}]!')
         exit(1)
     split_index = int(xml_size / 4)
 
     # save to csv
-    async def save_to_csv(f):
-        box = xml_q.get_nowait()
-        f.write(','.join(box))
-        f.write('\n')
+    async def save_to_csv(writer):
+        writer.writerow(xml_q.get_nowait())
 
-    with open(f'{csv_path}/train.csv', 'w') as train_f, open(f'{csv_path}/eval.csv', 'w') as eval_f:
-        train_f.write(','.join(columns))
-        train_f.write('\n')
-        eval_f.write(','.join(columns))
-        eval_f.write('\n')
+    with open(f'{csv_path}/train.csv', 'w', newline='') as train_f, \
+            open(f'{csv_path}/eval.csv', 'w', newline='') as eval_f:
+        train_writer = csv.writer(train_f)
+        eval_writer = csv.writer(eval_f)
+        train_writer.writerow(columns)
+        eval_writer.writerow(columns)
+
         tasks = []
         for i in range(xml_size):
             if i > split_index:
-                tasks.append(asyncio.create_task(save_to_csv(train_f)))
+                tasks.append(asyncio.create_task(save_to_csv(train_writer)))
             else:
-                tasks.append(asyncio.create_task(save_to_csv(eval_f)))
+                tasks.append(asyncio.create_task(save_to_csv(eval_writer)))
         for task in tasks:
             await task
 
