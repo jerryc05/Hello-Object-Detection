@@ -39,6 +39,7 @@ python -m pip install --user -r requirements.txt
 ### Setup COCO API
 *For latest setup process, please refer to the official site [cocodataset/cocoapi](<https://github.com/cocodataset/cocoapi>).*
 
+#### `Windows` users:
 1.  Download `cocodataset/cocoapi/PythonAPI` and `cocodataset/cocoapi/common` folders.
 
 2.  Extract `PyhonAPI` and `common` folder so that the directory looks like:
@@ -55,23 +56,22 @@ python -m pip install --user -r requirements.txt
     |-- ...
     ```
 
-3.  ***IMPORTANT!*** For `Windows` users, modify file `./cocoapi/PythonAPI/setup.py` as follow:
+3.  ***IMPORTANT!*** Modify the file `./cocoapi/PythonAPI/setup.py` as follow:
     - Delete the line that contains `extra_compile_args`.
 
 4.  Build and install `pycocotools`:
 
     Run the following command in shell from folder `./cocoapi/PythonAPI`:
-    
-    #### `Windows` users:
     ```shell script
     python setup.py build_ext --inplace
     ```
-    
-    #### `Unix` users:
-    ```shell script
-    make
-    ```
-    
+
+#### `Unix` users:
+Run the following command in shell from folder `./`:                      
+```shell script
+python -m pip install pycocotools
+```
+
 5. Successful output will output `... -> pycocotools` as the last line of output.
 
 ### Install Protocol Buffer
@@ -97,7 +97,7 @@ python -m pip install --user -r requirements.txt
     ```shell script
     protoc object_detection/protos/*.proto --python_out=.
     ```
-    
+
 4.  Successful execution will output nothing.
 
 ### Add Libraries to `PYTHONPATH`
@@ -112,7 +112,7 @@ The following path shall be appended to Environment Variable `PYTHONPATH`:
     ```shell script
     python object_detection/builders/model_builder_test.py
     ```
-    
+
 2.  Successful execution will output `OK` or `OK (skipped=...)` as the last line of output.
 
 ## Label Image
@@ -127,7 +127,7 @@ The following path shall be appended to Environment Variable `PYTHONPATH`:
 
 ### Parse labels
 1.  Parse labels from `xml` to `csv`:
-    
+
     Run the following command in shell from folder `./`:
     ```shell script
     python xml_to_csv.py -i __PATH_TO_XML__ -o __PATH_TO_CSV__
@@ -137,7 +137,7 @@ The following path shall be appended to Environment Variable `PYTHONPATH`:
     2.  `__PATH_TO_CSV__` <- path of csv that the script will create. 
 
 2.  Parse `csv` to `TFRecord`:
-    
+
     Run the following command in shell from folder `./`:
     ```shell script
     python csv_to_tfrecord.py -c __PATH_TO_CSV__ -i __PATH_TO_IMG__ -o __PATH_TO_TFRECORD__
