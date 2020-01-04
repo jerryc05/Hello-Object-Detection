@@ -19,7 +19,7 @@ Author: [@jerryc05](<https://github.com/jerryc05>)
 2.  [Label Image](#label-image)
     1.  [Install labelImg](#install-labelimg)
     2.  [Use labelImg](#use-labelimg)
-    3.  [Organize labels](#organize-labels)
+    3.  [Parse labels](#parse-labels)
 
 ## Installation
 *For latest setup process, please refer to the following site:*
