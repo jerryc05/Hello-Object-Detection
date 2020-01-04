@@ -4,7 +4,6 @@ This is a tutorial to help you setup Object Detection using `TensorFlow Object D
 Author: [@jerryc05](<https://github.com/jerryc05>)
 
 *For latest setup process, please refer to the following sites:*
--   [tensorflow/models/object_detection/g3doc/installation.md](<https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/installation.md>)
 -   [tensorflow/models/object_detection](<https://github.com/tensorflow/models/tree/master/research/object_detection>)
 -   [tensorflow/models](<https://github.com/tensorflow/models>)
 
@@ -17,13 +16,19 @@ Author: [@jerryc05](<https://github.com/jerryc05>)
     5.  [Compile protobuf models and parameters](#compile-protobuf-models-and-parameters)
     6.  [Add Libraries to PYTHONPATH](#add-libraries-to-pythonpath)
     7.  [Test Installation](#test-installation)
+2.  [Label Image](#label-image)
+    1.  [Install labelImg](#install-labelimg)
+    2.  [Use labelImg](#use-labelimg)
+    3.  [Organize labels](#organize-labels)
 
 ## Installation
+*For latest setup process, please refer to the following site:*
+-   [tensorflow/models/object_detection/g3doc/installation.md](<https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/installation.md>)
 
 ### Setup Tensorflow-GPU
 Please refer to the official tutorials:
 -   [TensorFlow GPU Support](<https://www.tensorflow.org/install/gpu>)
--   [TensorFlow GPU Support (w/o VPN)](<https://tensorflow.google.cn/install/gpu>)
+-   [TensorFlow GPU Support (Mainland China)](<https://tensorflow.google.cn/install/gpu>)
 
 ### Setup PyPi Libraries
 Run the following command in shell from folder `./`:
@@ -109,3 +114,19 @@ The following path shall be appended to Environment Variable `PYTHONPATH`:
     ```
     
 2.  Successful execution will output `OK` or `OK (skipped=...)` as the last line of output.
+
+## Label Image
+*For latest setup process, please refer to the following sites:*
+-   [tzutalin/labelImg](<https://github.com/tzutalin/labelImg>)
+
+### Install labelImg
+*You should have this installed already via [1.2 Setup PyPi Libraries](#setup-pypi-libraries).*
+
+### Use labelImg
+*No Bullshit here, please refer to official site [tzutalin/labelImg](<https://github.com/tzutalin/labelImg>).*
+
+### Organize labels
+// todo
+
+
+
