@@ -3,6 +3,8 @@
     <words>
       <w>cocoapi</w>
       <w>cocodataset</w>
+      <w>protobuf</w>
+      <w>protocolbuffers</w>
       <w>tensorflow</w>
     </words>
   </dictionary>
