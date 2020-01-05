@@ -157,9 +157,9 @@ The following path shall be appended to Environment Variable `PYTHONPATH`:
 1.  Select a pre-configure model config from `./models/research/object_detection/samples/configs`.
 
 2.  Copy the `.config` file to somewhere else.
-    
+
     For example, I use `./training/faster_rcnn_inception_resnet_v2_atrous_coco.config`.
-    
+
     So the directory looks like:
     ```text
     Hello-Object-Detection
@@ -175,10 +175,12 @@ The following path shall be appended to Environment Variable `PYTHONPATH`:
 
     If you forgot the number, check your `.pbtxt` file that contains label map.
 
-5.  Replace the value of `fine_tune_checkpoint` with the path of model file to save.
+5.  Replace the value of `fine_tune_checkpoint` with the path of model checkpoint file to save.
 
     For example, I use `"./training/faster_rcnn_inception_resnet_v2_atrous_coco.ckpt"`.
-    
+
+    ***IMPORTANT!*** If the checkpoint file does not exist yet, comment out this line by adding a `#` at the begining.
+
 6.  Replace the value of `input_path` under section `train_input_reader` with the path of 
 training TFRecord file.
 
@@ -188,7 +190,7 @@ training TFRecord file.
 of training label map `.pbtxt`file.
 
 8.  Replace the value of `num_examples` with the number of images to train.
-    
+
 9.  Replace the value of `input_path` under section `eval_input_reader` with the path of 
 eval TFRecord file.
 
@@ -200,11 +202,11 @@ of eval label map `.pbtxt`file.
 ### Run Training
 Run the following command in shell from folder `./models/research/object_detection`:
 ```shell script
-python model_main.py --pipeline_config_path=${PIPELINE_CONFIG_PATH} --model_dir=${MODEL_DIR} --alsologtostderr
+python model_main.py --pipeline_config_path=${PATH_TO_CONFIG_FILE} --model_dir=${PATH_TO_CHECKPOINT_FOLDER} --alsologtostderr
 ```
 ***Note: change the following paths before running the script:***
-1.  `${PIPELINE_CONFIG_PATH}` <- path of pre-configured model config file. 
-2.  `${MODEL_DIR}` <- path where training checkpoints and events will be saved.
+1.  `${PATH_TO_CONFIG_FILE}` <- path of pre-configured model config file. 
+2.  `${PATH_TO_CHECKPOINT_FOLDER}` <- path where training checkpoints and events will be saved.
 
 
 
