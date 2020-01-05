@@ -1,5 +1,6 @@
 # An asyncio-powered xml to vsc parser for labelImg.
 # Author: @jerryc05 - https://github.com/jerryc05
+#
 # Example usage: python xml_to_csv.py \
 #                   -i __PATH_TO_XML_FOLDER__ \
 #                   -o __PATH_TO_CSV_FOLDER__
@@ -13,7 +14,7 @@ import xml.etree.ElementTree as xmlETree
 
 
 async def main():
-    arg_parser = argparse.ArgumentParser(description='An xml to vsc parser for labelImg.')
+    arg_parser = argparse.ArgumentParser(description='An asyncio-powered xml to vsc parser for labelImg.')
     arg_parser.add_argument('-i', '--input', required=True,
                             help='the path to folder containing input xml files.')
     arg_parser.add_argument('-o', '--output', required=True,
