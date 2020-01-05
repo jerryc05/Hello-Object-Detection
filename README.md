@@ -151,6 +151,7 @@ The following path shall be appended to Environment Variable `PYTHONPATH`:
     1.  `__PATH_TO_IMG_FOLDER__` <- path of image files. 
     2.  `__PATH_TO_TFRECORD_FILE__` <- path of TFRecord file that the script will create. 
 
+    ***Note: you might need to run it twice for both `train.csv` and `eval.csv` respectively.***
 
 
 
