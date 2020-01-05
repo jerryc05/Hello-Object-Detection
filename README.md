@@ -81,7 +81,7 @@ python -m pip install pycocotools
 ### Compile protobuf models and parameters
 1.  Download `tensorflow/models/research/object_detection` and `tensorflow/models/research/slim` folders.
 
-2.  Extract `object_detection` and `slim `folders so that the directory looks like:
+2.  Extract `object_detection` and `slim` folders so that the directory looks like:
     ```text
     Hello-Object-Detection
     |-- models
