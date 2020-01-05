@@ -1,9 +1,14 @@
-# An asyncio-powered xml to vsc parser for labelImg.
-# Author: @jerryc05 - https://github.com/jerryc05
-#
-# Example usage: python xml_to_csv.py \
-#                   -i __PATH_TO_XML_FOLDER__ \
-#                   -o __PATH_TO_CSV_FOLDER__
+r"""
+An asyncio-powered xml to vsc parser for labelImg.
+
+Author: @jerryc05 - https://github.com/jerryc05
+
+Example Usage:
+--------------
+python xml_to_csv.py \
+       -i ${PATH_TO_XML_FOLDER} \
+       -o ${PATH_TO_CSV_FOLDER}
+"""
 
 import argparse
 import asyncio
