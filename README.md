@@ -65,14 +65,13 @@ python -m pip install --user -r requirements.txt
     ```shell script
     python setup.py build_ext --inplace
     ```
+5. Successful output will output `... -> pycocotools` as the last line of output.
 
 #### `Unix` users:
 Run the following command in shell from folder `./`:                      
 ```shell script
 python -m pip install pycocotools
 ```
-
-5. Successful output will output `... -> pycocotools` as the last line of output.
 
 ### Install Protocol Buffer
 1.  Download the corresponding binary zipped release from [protocolbuffers/protobuf](<https://github.com/protocolbuffers/protobuf/releases>).
