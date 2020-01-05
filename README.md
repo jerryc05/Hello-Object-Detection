@@ -63,9 +63,9 @@ python -m pip install --user -r requirements.txt
 
     Run the following command in shell from folder `./cocoapi/PythonAPI`:
     ```shell script
-    python setup.py build_ext --inplace
+    python setup.py install
     ```
-5. Successful output will output `... -> pycocotools` as the last line of output.
+5. Successful output will output `Finished processing dependencies for pycocotools==...` as the last line of output.
 
 #### `Unix` users:
 Run the following command in shell from folder `./`:                      
@@ -119,8 +119,7 @@ The following path shall be appended to Environment Variable `PYTHONPATH`:
 2.  Successful execution will output `OK` or `OK (skipped=...)` as the last line of output.
 
 ## Label Image
-*For latest setup process, please refer to the following sites:*
--   [tzutalin/labelImg](<https://github.com/tzutalin/labelImg>)
+*For latest setup process, please refer to site: [tzutalin/labelImg](<https://github.com/tzutalin/labelImg>)*
 
 ### Install labelImg
 *You should have this installed already via [1.2) Setup PyPi Libraries](#setup-pypi-libraries).*
@@ -133,24 +132,79 @@ The following path shall be appended to Environment Variable `PYTHONPATH`:
 
     Run the following command in shell from folder `./`:
     ```shell script
-    python xml_to_csv.py -i __PATH_TO_XML_FOLDER__ -o __PATH_TO_CSV_FOLDER__
+    python xml_to_csv.py -i ${PATH_TO_XML_FOLDER} -o ${PATH_TO_CSV_FOLDER}
     ```
     ***Note: change the following paths before running the script:***
-    1.  `__PATH_TO_XML_FOLDER__` <- path of xml labels created by `labelImg`. 
-    2.  `__PATH_TO_CSV_FOLDER__` <- path of csv that the script will create. 
+    1.  `${PATH_TO_XML_FOLDER}` <- path of xml labels created by `labelImg`. 
+    2.  `${PATH_TO_CSV_FOLDER}` <- path where csv file will be saved. 
 
 2.  Parse `csv` to `TFRecord`:
 
     Run the following command in shell from folder `./`:
     ```shell script
-    python csv_to_tfrecord.py -c __PATH_TO_CSV_FILE__ -i __PATH_TO_IMG_FOLDER__ -o __PATH_TO_TFRECORD_FILE__
+    python csv_to_tfrecord.py -c ${PATH_TO_CSV_FILE} -i ${PATH_TO_IMG_FOLDER} -o ${PATH_TO_TFRECORD_FILE_FOLDER}
     ```
     ***Note: change the following paths before running the script:***
-    1.  `__PATH_TO_CSV_FILE__` <- path of csv file created by `xml_to_csv.py`. 
-    1.  `__PATH_TO_IMG_FOLDER__` <- path of image files. 
-    2.  `__PATH_TO_TFRECORD_FILE__` <- path of TFRecord file that the script will create. 
+    1.  `${PATH_TO_CSV_FILE}` <- path of csv file created by `xml_to_csv.py`. 
+    2.  `${PATH_TO_IMG_FOLDER}` <- path of image files. 
+    3.  `${PATH_TO_TFRECORD_FILE_FOLDER}` <- path of TFRecord file that the script will create. 
 
     ***Note: you might need to run it twice for both `train.csv` and `eval.csv` respectively.***
+
+## Start Training
+
+### Configure Training
+1.  Select a pre-configure model config from `./models/research/object_detection/samples/configs`.
+
+2.  Copy the `.config` file to somewhere else.
+    
+    For example, I use `./training/faster_rcnn_inception_resnet_v2_atrous_coco.config`.
+    
+    So the directory looks like:
+    ```text
+    Hello-Object-Detection
+    |-- training
+    |   |-- faster_rcnn_inception_resnet_v2_atrous_coco.config
+    |-- main.py
+    |-- ...
+    ```
+
+3.  Open the config file.
+
+4.  Replace the value of `num_classes` with your number of classes.
+
+    If you forgot the number, check your `.pbtxt` file that contains label map.
+
+5.  Replace the value of `fine_tune_checkpoint` with the path of model file to save.
+
+    For example, I use `"./training/faster_rcnn_inception_resnet_v2_atrous_coco.ckpt"`.
+    
+6.  Replace the value of `input_path` under section `train_input_reader` with the path of 
+training TFRecord file.
+
+    *Note: wildcard char `?` can be used to match multiple file names.*
+
+7.  Replace the value of `label_map_path` under section `train_input_reader` with the path 
+of training label map `.pbtxt`file.
+
+8.  Replace the value of `num_examples` with the number of images to train.
+    
+9.  Replace the value of `input_path` under section `eval_input_reader` with the path of 
+eval TFRecord file.
+
+    *Note: wildcard char `?` can be used to match multiple file names.*
+
+10.  Replace the value of `label_map_path` under section `eval_input_reader` with the path 
+of eval label map `.pbtxt`file.
+
+### Run Training
+Run the following command in shell from folder `./models/research/object_detection`:
+```shell script
+python model_main.py --pipeline_config_path=${PIPELINE_CONFIG_PATH} --model_dir=${MODEL_DIR} --alsologtostderr
+```
+***Note: change the following paths before running the script:***
+1.  `${PIPELINE_CONFIG_PATH}` <- path of pre-configured model config file. 
+2.  `${MODEL_DIR}` <- path where training checkpoints and events will be saved.
 
 
 

@@ -132,3 +132,4 @@ dmypy.json
 /cocoapi
 /models
 /data
+/training

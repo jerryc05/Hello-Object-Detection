@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="03917fd1-a151-4115-b529-1e450ad1d980" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-    </list>
+    <list default="true" id="03917fd1-a151-4115-b529-1e450ad1d980" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -107,9 +105,12 @@
       <workItem from="1578114041531" duration="2040000" />
       <workItem from="1578116102842" duration="591000" />
       <workItem from="1578116729261" duration="15445000" />
-      <workItem from="1578152229023" duration="20088000" />
+      <workItem from="1578152229023" duration="25202000" />
     </task>
     <servers />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName="*.config" />
   </component>
   <component name="WindowStateProjectService">
     <state x="989" y="188" width="816" height="729" key="#Intentions" timestamp="1578143916745">
