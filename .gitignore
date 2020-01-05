@@ -133,3 +133,4 @@ dmypy.json
 /models
 /data
 /training
+/.idea/workspace.xml
