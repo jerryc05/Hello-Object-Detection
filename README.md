@@ -71,7 +71,7 @@ python -m pip install --user -r requirements.txt
 5. Successful output will output `Finished processing dependencies for pycocotools==...` as the last line of output.
 
 #### `Unix` users:
-Run the following command in shell from folder `./`:                      
+Run the following command in shell from folder `./`:
 ```shell script
 python -m pip install pycocotools
 ```
@@ -138,8 +138,8 @@ The following path shall be appended to Environment Variable `PYTHONPATH`:
     python xml_to_csv.py -i ${PATH_TO_XML_FOLDER} -o ${PATH_TO_CSV_FOLDER}
     ```
     ***Note: change the following paths before running the script:***
-    1.  `${PATH_TO_XML_FOLDER}` <- path of xml labels created by `labelImg`. 
-    2.  `${PATH_TO_CSV_FOLDER}` <- path where csv file will be saved. 
+    1.  `${PATH_TO_XML_FOLDER}` <- path of xml labels created by `labelImg`.
+    2.  `${PATH_TO_CSV_FOLDER}` <- path where csv file will be saved.
 
 2.  Parse `csv` to `TFRecord`:
 
@@ -148,9 +148,9 @@ The following path shall be appended to Environment Variable `PYTHONPATH`:
     python csv_to_tfrecord.py -c ${PATH_TO_CSV_FILE} -i ${PATH_TO_IMG_FOLDER} -o ${PATH_TO_TFRECORD_FILE_FOLDER}
     ```
     ***Note: change the following paths before running the script:***
-    1.  `${PATH_TO_CSV_FILE}` <- path of csv file created by `xml_to_csv.py`. 
-    2.  `${PATH_TO_IMG_FOLDER}` <- path of image files. 
-    3.  `${PATH_TO_TFRECORD_FILE_FOLDER}` <- path of TFRecord file that the script will create. 
+    1.  `${PATH_TO_CSV_FILE}` <- path of csv file created by `xml_to_csv.py`.
+    2.  `${PATH_TO_IMG_FOLDER}` <- path of image files.
+    3.  `${PATH_TO_TFRECORD_FILE_FOLDER}` <- path of TFRecord file that the script will create.
 
     ***Note: you might need to run it twice for both `train.csv` and `eval.csv` respectively.***
 
@@ -182,24 +182,24 @@ The following path shall be appended to Environment Variable `PYTHONPATH`:
 
     For example, I use `"./training/faster_rcnn_inception_resnet_v2_atrous_coco.ckpt"`.
 
-    ***IMPORTANT!*** If the checkpoint file does not exist yet, comment out this line by adding a `#` at the begining.
+    ***IMPORTANT!*** If the pre-trained model does not exist yet, comment out this line by adding a `#` at the begining.
 
-6.  Replace the value of `input_path` under section `train_input_reader` with the path of 
+6.  Replace the value of `input_path` under section `train_input_reader` with the path of
 training TFRecord file.
 
     *Note: wildcard char `?` can be used to match multiple file names.*
 
-7.  Replace the value of `label_map_path` under section `train_input_reader` with the path 
+7.  Replace the value of `label_map_path` under section `train_input_reader` with the path
 of training label map `.pbtxt`file.
 
 8.  Replace the value of `num_examples` with the number of images to train.
 
-9.  Replace the value of `input_path` under section `eval_input_reader` with the path of 
+9.  Replace the value of `input_path` under section `eval_input_reader` with the path of
 eval TFRecord file.
 
     *Note: wildcard char `?` can be used to match multiple file names.*
 
-10.  Replace the value of `label_map_path` under section `eval_input_reader` with the path 
+10.  Replace the value of `label_map_path` under section `eval_input_reader` with the path
 of eval label map `.pbtxt`file.
 
 ### Run Training
@@ -208,10 +208,5 @@ Run the following command in shell from folder `./models/research/object_detecti
 python model_main.py --pipeline_config_path=${PATH_TO_CONFIG_FILE} --model_dir=${PATH_TO_CHECKPOINT_FOLDER} --alsologtostderr
 ```
 ***Note: change the following paths before running the script:***
-1.  `${PATH_TO_CONFIG_FILE}` <- path of pre-configured model config file. 
+1.  `${PATH_TO_CONFIG_FILE}` <- path of pre-configured model config file.
 2.  `${PATH_TO_CHECKPOINT_FOLDER}` <- path where training checkpoints and events will be saved.
-
-
-
-
-
