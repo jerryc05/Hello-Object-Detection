@@ -20,6 +20,9 @@ Author: [@jerryc05](<https://github.com/jerryc05>)
     1.  [Install labelImg](#install-labelimg)
     2.  [Use labelImg](#use-labelimg)
     3.  [Parse labels](#parse-labels)
+3.  [Start Training](#start-training)
+    1.  [Configure Training](#configure-training)
+    2.  [Run Training](#run-training)
 
 ## Installation
 *For latest setup process, please refer to the following site:*
