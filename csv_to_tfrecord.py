@@ -1,11 +1,16 @@
-# An asyncio-powered csv to TFRecord parser. It also generates class ids and
-#   the label pbtxt for you automatically.
-# Author: @jerryc05 - https://github.com/jerryc05
-#
-# Example usage: python csv_to_tfrecord.py \
-#                   -c __PATH_TO_CSV_FILE__ \
-#                   -i __PATH_TO_IMG_FOLDER__ \
-#                   -o __PATH_TO_TFRECORD_FILE__
+r"""
+An asyncio-powered csv to TFRecord parser. It also generates class ids and
+    the label pbtxt for you automatically.
+
+Author: @jerryc05 - https://github.com/jerryc05
+
+Example Usage:
+--------------
+python csv_to_tfrecord.py \
+       -c ${PATH_TO_CSV_FILE} \
+       -i ${PATH_TO_IMG_FOLDER} \
+       -o ${PATH_TO_TFRECORD_FILE_FOLDER}
+"""
 
 import argparse
 import asyncio
