@@ -1,5 +1,7 @@
-# An asyncio-powered csv to TFRecord parser.
+# An asyncio-powered csv to TFRecord parser. It also generates class ids and
+#   the label pbtxt for you automatically.
 # Author: @jerryc05 - https://github.com/jerryc05
+#
 # Example usage: python csv_to_tfrecord.py \
 #                   -c __PATH_TO_CSV_FILE__ \
 #                   -i __PATH_TO_IMG_FOLDER__ \
@@ -23,12 +25,17 @@ except ImportError:
 
 
 async def main():
-    arg_parser = argparse.ArgumentParser(description='A csv to TFRecord parser.')
+    arg_parser = argparse.ArgumentParser(description=
+                                         'An asyncio-powered csv to TFRecord parser. '
+                                         'It also generates class ids and the label pbtxt '
+                                         'for you automatically.')
     arg_parser.add_argument('-c', '--csv', required=True,
                             help='the path to folder containing input csv files.')
     arg_parser.add_argument('-i', '--img', required=True,
                             help='the path to folder containing image files.')
     arg_parser.add_argument('-o', '--output', required=True,
+                            help='the path to folder containing output TFRecord file.')
+    arg_parser.add_argument('-l', '--label',
                             help='the path to folder containing output TFRecord file.')
     args = arg_parser.parse_args()
 
@@ -39,6 +46,10 @@ async def main():
         exit(1)
     img_path: str = args.img.strip()
     tfrecord_path: str = args.output.strip()
+    if args.label:
+        label_path = args.label.strip()
+    else:
+        label_path = os.path.join(os.path.dirname(tfrecord_path), 'label_map.pbtxt')
 
     print(f'Processing {csv_path}!')
 
@@ -46,7 +57,7 @@ async def main():
     tasks: List[asyncio.Task] = []
 
     async def csv_to_pbtxt():
-        with open(os.path.join(tfrecord_path, 'label_map.pbtxt'), 'w') as f:
+        with open(label_path, 'w') as f:
             for i, name in enumerate(class_list):
                 f.write(f"item {{\n  id: {i + 1}\n  name: '{name}'\n}}\n")
 
@@ -131,7 +142,9 @@ async def main():
 
         print()
         print('CSV -> TFRecord successful!')
-        print(f'Processed {len(grouped)} files in total!')
+        print(f'Processed [{len(grouped)}] files in total!')
+        print(f'TFRecord file location: [{tfrecord_path}]!')
+        print(f'Label pbtxt file location: [{label_path}]!')
 
     tasks.append(asyncio.create_task(
         to_tfrecord(tfrecord_path)))
