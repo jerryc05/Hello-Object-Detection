@@ -11,6 +11,7 @@
       <w>protocolbuffers</w>
       <w>pythonpath</w>
       <w>tensorflow</w>
+      <w>tfexample</w>
       <w>tfrecord</w>
       <w>tzutalin</w>
     </words>

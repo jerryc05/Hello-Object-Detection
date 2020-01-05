@@ -1,14 +1,18 @@
 # An asyncio-powered csv to TFRecord parser.
 # Author: @jerryc05 - https://github.com/jerryc05
+# Example usage: python csv_to_tfrecord.py \
+#                   -c __PATH_TO_CSV_FILE__ \
+#                   -i __PATH_TO_IMG_FOLDER__ \
+#                   -o __PATH_TO_TFRECORD_FILE__
 
 import argparse
 import asyncio
 import csv
-from PIL import Image
 import io
-from collections import namedtuple
 import os
+import PIL.Image
 import tensorflow as tf
+from typing import List, Dict, Any
 
 try:
     import object_detection.utils.dataset_util as dataset_util
@@ -27,86 +31,61 @@ async def main():
     arg_parser.add_argument('-o', '--output', required=True,
                             help='the path to folder containing output TFRecord file.')
     args = arg_parser.parse_args()
-    del arg_parser
 
     csv_path: str = args.csv.strip()
-    if csv_path.endswith('/') or csv_path.endswith('\\'):
-        csv_path = csv_path[:-1]
     if not os.path.isfile(csv_path):
         print(f'WARNING! CSV file not found!')
         print(f'Please check your csv input path again: [{csv_path}]!')
         exit(1)
     img_path: str = args.img.strip()
-    if img_path.endswith('/') or img_path.endswith('\\'):
-        img_path = img_path[:-1]
     tfrecord_path: str = args.output.strip()
-    if tfrecord_path.endswith('/') or tfrecord_path.endswith('\\'):
-        tfrecord_path = tfrecord_path[:-1]
-    del args
 
     print(f'Processing {csv_path}!')
 
-    exit(0)
-
-    # flags = tf.app.flags
-    # flags.DEFINE_string('csv_input', '', 'Path to the CSV input')
-    # flags.DEFINE_string('output_path', '', 'Path to output TFRecord')
-    # FLAGS = flags.FLAGS
-
-    # parse text to id
     class_list = []
-    tasks = []
+    tasks: List[asyncio.Task] = []
 
     async def csv_to_pbtxt():
-        with open(f'{tfrecord_path}/label_map.pbtxt', 'w') as f:
+        with open(os.path.join(tfrecord_path, 'label_map.pbtxt'), 'w') as f:
             for i, name in enumerate(class_list):
                 f.write(f"item {{\n  id: {i + 1}\n  name: '{name}'\n}}\n")
-        del f, i, name
 
-    async def id_of_class(row_label):
+    # parse text to id
+    async def id_of_class(row_label: str):
+        assert isinstance(row_label, str)
         if not class_list:
             _classes = set()
             with open(csv_path) as f:
                 for row in csv.DictReader(f):
                     _classes.add(row['class'])
             class_list.extend(_classes)
-            del _classes
             tasks.append(asyncio.create_task(csv_to_pbtxt()))
         return 1 + class_list.index(row_label)
 
-    async def create_tf_example(group, path):
-        print(os.path.join(path, '{}'.format(group.filename)))
-        with tf.gfile.GFile(os.path.join(path, '{}'.format(group.filename)), 'rb') as fid:
-            encoded_jpg = fid.read()
-        encoded_jpg_io = io.BytesIO(encoded_jpg)
-        image = Image.open(encoded_jpg_io)
+    async def write_box_to_tfrecord(group: Dict[str, Any], tfrecord_writer):
+        filename: str = group['filename']
+        with tf.gfile.GFile(os.path.join(img_path, filename), 'rb') as fid:
+            encoded_img = fid.read()
+        image = PIL.Image.open(io.BytesIO(encoded_img))
         width, height = image.size
 
-        filename = (group.filename + '.jpg').encode('utf8')
-        image_format = b'jpg'
-        xmins = []
-        xmaxs = []
-        ymins = []
-        ymaxs = []
-        classes_text = []
-        classes = []
+        filename_b = filename.encode('utf8')
+        image_format = filename_b.split(b'.')[-1].lower()
+        xmins = [x / width for x in group['xmin']]
+        xmaxs = [x / width for x in group['xmax']]
+        ymins = [x / height for x in group['ymin']]
+        ymaxs = [x / height for x in group['ymax']]
+        classes_text = [x.encode('utf8') for x in group['class']]
+        classes = [await id_of_class(x) for x in group['class']]
 
-        for index, row in group.object.iterrows():
-            xmins.append(row['xmin'] / width)
-            xmaxs.append(row['xmax'] / width)
-            ymins.append(row['ymin'] / height)
-            ymaxs.append(row['ymax'] / height)
-            classes_text.append(row['class'].encode('utf8'))
-            classes.append(id_of_class(row['class']))
-
-        return tf.train.Example(
+        tf_example = tf.train.Example(
             features=tf.train.Features(
                 feature={
                     'image/height'            : dataset_util.int64_feature(height),
                     'image/width'             : dataset_util.int64_feature(width),
-                    'image/filename'          : dataset_util.bytes_feature(filename),
-                    'image/source_id'         : dataset_util.bytes_feature(filename),
-                    'image/encoded'           : dataset_util.bytes_feature(encoded_jpg),
+                    'image/filename'          : dataset_util.bytes_feature(filename_b),
+                    'image/source_id'         : dataset_util.bytes_feature(filename_b),
+                    'image/encoded'           : dataset_util.bytes_feature(encoded_img),
                     'image/format'            : dataset_util.bytes_feature(image_format),
                     'image/object/bbox/xmin'  : dataset_util.float_list_feature(xmins),
                     'image/object/bbox/xmax'  : dataset_util.float_list_feature(xmaxs),
@@ -115,23 +94,47 @@ async def main():
                     'image/object/class/text' : dataset_util.bytes_list_feature(classes_text),
                     'image/object/class/label': dataset_util.int64_list_feature(classes),
                 }))
+        tfrecord_writer.write(tf_example.SerializeToString())
 
-    async def to_tfrecord(csv_input, tfrecord_file_path):
-        with tf.python_io.TFRecordWriter(tfrecord_file_path) as writer:
-            examples = pd.read_csv(csv_input)
-            data = namedtuple('data', ['filename', 'object'])
-            gb = examples.groupby('filename')
-            grouped = [data(filename, gb.get_group(x)) for filename, x in
-                       zip(gb.groups.keys(), gb.groups)]
-            for group in grouped:
-                tf_example = create_tf_example(group, img_path)
-                writer.write(tf_example.SerializeToString())
+    async def to_tfrecord(tfrecord_file_path):
+        # data = collections.namedtuple('data', ['filename', 'object'])
+        grouped: Dict[str, Dict[str, Any]] = {}
+        with open(csv_path) as f:
+            # examples = pd.read_csv(csv_path)
+            for box in csv.DictReader(f):
+                filename = box['filename']
+                if filename not in grouped:
+                    grouped[filename] = {
+                        'filename': filename,
+                        'width'   : box['width'],
+                        'height'  : box['height'],
+                        'class'   : [],
+                        'xmin'    : [],
+                        'ymin'    : [],
+                        'xmax'    : [],
+                        'ymax'    : []
+                    }
+                group = grouped[filename]
+                group['class'].append(box['class'])
+                group['xmin'].append(int(box['xmin']))
+                group['ymin'].append(int(box['ymin']))
+                group['xmax'].append(int(box['xmax']))
+                group['ymax'].append(int(box['ymax']))
 
+        writer_tasks = []
+        with tf.python_io.TFRecordWriter(tfrecord_file_path) as tfrecord_writer:
+            for group in grouped.values():
+                writer_tasks.append(asyncio.create_task(
+                    write_box_to_tfrecord(group, tfrecord_writer)))
+            for task in writer_tasks:
+                await task
+
+        print()
         print('CSV -> TFRecord successful!')
-        # print('Processed', xml_size, 'boxes in total!')
+        print(f'Processed {len(grouped)} files in total!')
 
-    tasks.append(to_tfrecord(csv_path, f'{tfrecord_path}/train.record'))
-    tasks.append(to_tfrecord(csv_path, f'{tfrecord_path}/eval.record'))
+    tasks.append(asyncio.create_task(
+        to_tfrecord(tfrecord_path)))
 
     for task in tasks:
         await task

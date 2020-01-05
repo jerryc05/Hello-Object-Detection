@@ -134,22 +134,22 @@ The following path shall be appended to Environment Variable `PYTHONPATH`:
 
     Run the following command in shell from folder `./`:
     ```shell script
-    python xml_to_csv.py -i __PATH_TO_XML__ -o __PATH_TO_CSV__
+    python xml_to_csv.py -i __PATH_TO_XML_FOLDER__ -o __PATH_TO_CSV_FOLDER__
     ```
     ***Note: change the following paths before running the script:***
-    1.  `__PATH_TO_XML__` <- path of xml labels created by `labelImg`. 
-    2.  `__PATH_TO_CSV__` <- path of csv that the script will create. 
+    1.  `__PATH_TO_XML_FOLDER__` <- path of xml labels created by `labelImg`. 
+    2.  `__PATH_TO_CSV_FOLDER__` <- path of csv that the script will create. 
 
 2.  Parse `csv` to `TFRecord`:
 
     Run the following command in shell from folder `./`:
     ```shell script
-    python csv_to_tfrecord.py -c __PATH_TO_CSV__ -i __PATH_TO_IMG__ -o __PATH_TO_TFRECORD__
+    python csv_to_tfrecord.py -c __PATH_TO_CSV_FILE__ -i __PATH_TO_IMG_FOLDER__ -o __PATH_TO_TFRECORD_FILE__
     ```
     ***Note: change the following paths before running the script:***
-    1.  `__PATH_TO_CSV__` <- path of csv file created by `xml_to_csv.py`. 
-    1.  `__PATH_TO_IMG__` <- path of image files. 
-    2.  `__PATH_TO_TFRECORD__` <- path of TFRecord file that the script will create. 
+    1.  `__PATH_TO_CSV_FILE__` <- path of csv file created by `xml_to_csv.py`. 
+    1.  `__PATH_TO_IMG_FOLDER__` <- path of image files. 
+    2.  `__PATH_TO_TFRECORD_FILE__` <- path of TFRecord file that the script will create. 
 
 
 
