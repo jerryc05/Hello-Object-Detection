@@ -3,8 +3,9 @@ import os
 
 __cwd__ = os.getcwd()
 
-__PYTHONPATH_ENV_VAR__ = {'PYTHONPATH': rf'{__cwd__}\models\research;'
-                                        rf'{__cwd__}\models\research\slim;'}
+__PYTHONPATH_ENV_VAR__ = os.environ
+__PYTHONPATH_ENV_VAR__.update({'PYTHONPATH': rf'{__cwd__}\models\research;'
+                                             rf'{__cwd__}\models\research\slim;'})
 
 
 async def train_async(pipeline_config_path, model_dir):
