@@ -5,7 +5,7 @@ Author: @jerryc05 - https://github.com/jerryc05
 
 Example Usage:
 --------------
-python flatten_data.py \
+python flatten_folder.py \
        -i ${PATH_TO_FOLDER_TO_FLATTEN} \
        -o ${PATH_TO_OUTPUT_FOLDER}
 """
@@ -49,4 +49,4 @@ async def main():
 
 
 asyncio.run(main())
-# flatten_data.py -i F:\PycharmProjects\Hello-Object-Detection\data\train\data -o F:\PycharmProjects\Hello-Object-Detection\data\train\data
+# flatten_folder.py -i F:\PycharmProjects\Hello-Object-Detection\data\train\data -o F:\PycharmProjects\Hello-Object-Detection\data\train\data
