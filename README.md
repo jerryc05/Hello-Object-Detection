@@ -135,7 +135,7 @@ The following path shall be appended to Environment Variable `PYTHONPATH`:
 
     Run the following command in shell from folder `./`:
     ```shell script
-    python xml_to_csv.py -i ${PATH_TO_XML_FOLDER} -o ${PATH_TO_CSV_FOLDER}
+    python utils/xml_to_csv.py -i ${PATH_TO_XML_FOLDER} -o ${PATH_TO_CSV_FOLDER}
     ```
     ***Note: change the following paths before running the script:***
     1.  `${PATH_TO_XML_FOLDER}` <- path of xml labels created by `labelImg`.
@@ -145,7 +145,7 @@ The following path shall be appended to Environment Variable `PYTHONPATH`:
 
     Run the following command in shell from folder `./`:
     ```shell script
-    python csv_to_tfrecord.py -c ${PATH_TO_CSV_FILE} -i ${PATH_TO_IMG_FOLDER} -o ${PATH_TO_TFRECORD_FILE_FOLDER}
+    python utils/csv_to_tfrecord.py -c ${PATH_TO_CSV_FILE} -i ${PATH_TO_IMG_FOLDER} -o ${PATH_TO_TFRECORD_FILE_FOLDER}
     ```
     ***Note: change the following paths before running the script:***
     1.  `${PATH_TO_CSV_FILE}` <- path of csv file created by `xml_to_csv.py`.
@@ -161,13 +161,13 @@ The following path shall be appended to Environment Variable `PYTHONPATH`:
 
 2.  Copy the `.config` file to somewhere else.
 
-    For example, I use `./training/faster_rcnn_inception_resnet_v2_atrous_coco.config`.
+    For example, I use `./config/ssd_resnet50_v1_fpn_shared_box_predictor_640x640_coco14_sync.config`.
 
     So the directory looks like:
     ```text
     Hello-Object-Detection
     |-- training
-    |   |-- faster_rcnn_inception_resnet_v2_atrous_coco.config
+    |   |-- ssd_resnet50_v1_fpn_shared_box_predictor_640x640_coco14_sync.config
     |-- main.py
     |-- ...
     ```
@@ -180,7 +180,7 @@ The following path shall be appended to Environment Variable `PYTHONPATH`:
 
 5.  Replace the value of `fine_tune_checkpoint` with the path of model checkpoint file to save.
 
-    For example, I use `"./training/faster_rcnn_inception_resnet_v2_atrous_coco.ckpt"`.
+    For example, I use `"./config/ssd_resnet50_v1_fpn_shared_box_predictor_640x640_coco14_sync.ckpt"`.
 
     ***IMPORTANT!*** If the pre-trained model does not exist yet, comment out this line by adding a `#` at the begining.
 
@@ -192,7 +192,7 @@ training TFRecord file.
 7.  Replace the value of `label_map_path` under section `train_input_reader` with the path
 of training label map `.pbtxt`file.
 
-8.  Replace the value of `num_examples` with the number of images to train.
+8.  *OPTIONAL: Replace the value of `num_examples` with the number of images to eval.*
 
 9.  Replace the value of `input_path` under section `eval_input_reader` with the path of
 eval TFRecord file.

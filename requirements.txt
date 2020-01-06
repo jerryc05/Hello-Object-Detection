@@ -1,7 +1,7 @@
-contextlib2
+# contextlib2
 Cython
 labelImg
-lxml
+# lxml
 matplotlib
 pillow
 tensorflow-gpu>=1.4, <2
