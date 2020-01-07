@@ -23,6 +23,7 @@ Author: [@jerryc05](<https://github.com/jerryc05>)
 3.  [Start Training](#start-training)
     1.  [Configure Training](#configure-training)
     2.  [Run Training](#run-training)
+4.  [Freeze Model](#freeze-model)
 
 ## Installation
 *For latest setup process, please refer to the following site:*
@@ -125,7 +126,10 @@ The following path shall be appended to Environment Variable `PYTHONPATH`:
 *For latest setup process, please refer to site: [tzutalin/labelImg](<https://github.com/tzutalin/labelImg>)*
 
 ### Install labelImg
-*You should have this installed already via [1.2) Setup PyPi Libraries](#setup-pypi-libraries).*
+Run the following command in shell from folder `./`:
+```shell script
+python -m pip install labelImg
+```
 
 ### Use labelImg
 *No Bullshit here, please refer to official site [tzutalin/labelImg](<https://github.com/tzutalin/labelImg>).*
@@ -203,10 +207,20 @@ eval TFRecord file.
 of eval label map `.pbtxt`file.
 
 ### Run Training
-Run the following command in shell from folder `./models/research/object_detection`:
+Run the following command in shell from folder `./`:
 ```shell script
-python model_main.py --pipeline_config_path=${PATH_TO_CONFIG_FILE} --model_dir=${PATH_TO_CHECKPOINT_FOLDER} --alsologtostderr
+python models/research/object_detection/model_main.py --pipeline_config_path=${PATH_TO_CONFIG_FILE} --model_dir=${PATH_TO_CHECKPOINT_FOLDER} --alsologtostderr
 ```
 ***Note: change the following paths before running the script:***
 1.  `${PATH_TO_CONFIG_FILE}` <- path of pre-configured model config file.
 2.  `${PATH_TO_CHECKPOINT_FOLDER}` <- path where training checkpoints and events will be saved.
+
+## Freeze Model
+Run the following command in shell from folder `./`:
+```shell script
+python models/research/object_detection/export_inference_graph.py --pipeline_config_path ${PIPELINE_CONFIG_PATH} --output_directory ${OUTPUT_PATH} --trained_checkpoint_prefix ${CKPT_PATH_PREFIX_ONLY}
+```
+***Note: change the following paths before running the script:***
+1.  `${PIPELINE_CONFIG_PATH}` <- path of pre-configured model config file.
+2.  `${OUTPUT_PATH}` <- path where the frozen model will be saved.
+3.  `${CKPT_PATH_PREFIX_ONLY}` <- path of the checkpoint file, discarding postfixes such as `.meta`, `.index`, and `.data-...`.
