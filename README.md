@@ -43,7 +43,7 @@ python -m pip install --user -r requirements.txt
 ### Setup COCO API
 *For latest setup process, please refer to the official site [cocodataset/cocoapi](<https://github.com/cocodataset/cocoapi>).*
 
-#### `Windows` users:
+#### `Windows` or `Unix` users:
 1.  Download `cocodataset/cocoapi/PythonAPI` and `cocodataset/cocoapi/common` folders.
 
 2.  Extract `PyhonAPI` and `common` folder so that the directory looks like:
@@ -71,7 +71,7 @@ python -m pip install --user -r requirements.txt
     ```
 5. Successful output will output `Finished processing dependencies for pycocotools==...` as the last line of output.
 
-#### `Unix` users:
+#### `Unix` users only:
 Run the following command in shell from folder `./`:
 ```shell script
 python -m pip install pycocotools
@@ -192,7 +192,7 @@ python -m pip install labelImg
 
     For example, I use `"./config/ssd_resnet50_v1_fpn_shared_box_predictor_640x640_coco14_sync.ckpt"`.
 
-    *Note: If the model should be trained indefinitely, comment out this line by adding a `#` at the beginning.* 
+    *Note: If the model should be trained indefinitely, comment out this line by adding a `#` at the beginning.*
 
 7.  Replace the value of `input_path` under section `train_input_reader` with the path of
 training TFRecord file.

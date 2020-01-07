@@ -1,6 +1,6 @@
 import os
 import subprocess
-from utils import __str_error__, __str_warning__
+from log_helper import str_warning
 
 __exec__ = subprocess.call
 
@@ -53,7 +53,7 @@ async def export_inference_graph_async(pipeline_config_path,
         raise ValueError('Variable ${pipeline_config_path} or ${ckpt_prefix}'
                          ' or ${output_dir} not set!')
     if os.path.realpath(pipeline_config_path) == os.path.realpath(output_path):
-        print(__str_warning__)
+        print(str_warning)
         print(
             'Using same ${pipeline_config_path} and ${ckpt_prefix} may ruin existing data!'
         )
