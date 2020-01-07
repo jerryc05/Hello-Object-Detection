@@ -19,7 +19,7 @@ import io
 import os
 import PIL.Image
 from typing import List, Dict, Any
-from log_helper import str_error
+from utils.log_helper import str_error
 
 
 async def main():
