@@ -188,22 +188,28 @@ python -m pip install labelImg
 
     ***IMPORTANT!*** If the pre-trained model does not exist yet, comment out this line by adding a `#` at the begining.
 
-6.  Replace the value of `input_path` under section `train_input_reader` with the path of
+6.  Replace the value of `num_steps` with the number of steps to train.
+
+    For example, I use `"./config/ssd_resnet50_v1_fpn_shared_box_predictor_640x640_coco14_sync.ckpt"`.
+
+    *Note: If the model should be trained indefinitely, comment out this line by adding a `#` at the beginning.* 
+
+7.  Replace the value of `input_path` under section `train_input_reader` with the path of
 training TFRecord file.
 
     *Note: wildcard char `?` can be used to match multiple file names.*
 
-7.  Replace the value of `label_map_path` under section `train_input_reader` with the path
+8.  Replace the value of `label_map_path` under section `train_input_reader` with the path
 of training label map `.pbtxt`file.
 
-8.  *OPTIONAL: Replace the value of `num_examples` with the number of images to eval.*
+9.  *OPTIONAL: Replace the value of `num_examples` with the number of images to eval.*
 
-9.  Replace the value of `input_path` under section `eval_input_reader` with the path of
+10. Replace the value of `input_path` under section `eval_input_reader` with the path of
 eval TFRecord file.
 
     *Note: wildcard char `?` can be used to match multiple file names.*
 
-10.  Replace the value of `label_map_path` under section `eval_input_reader` with the path
+11.  Replace the value of `label_map_path` under section `eval_input_reader` with the path
 of eval label map `.pbtxt`file.
 
 ### Run Training

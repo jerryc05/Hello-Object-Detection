@@ -1,9 +1,25 @@
 import subprocess
+from utils.eval import *
 import os
 
 __exec__ = subprocess.call
 __dir_name__ = os.path.dirname
 __cwd__ = __dir_name__(__dir_name__(__file__))
+
+__str_warning__ = '''\
+██╗    ██╗ █████╗ ██████╗ ███╗   ██╗██╗███╗   ██╗ ██████╗ ██╗
+██║    ██║██╔══██╗██╔══██╗████╗  ██║██║████╗  ██║██╔════╝ ██║
+██║ █╗ ██║███████║██████╔╝██╔██╗ ██║██║██╔██╗ ██║██║  ███╗██║
+██║███╗██║██╔══██║██╔══██╗██║╚██╗██║██║██║╚██╗██║██║   ██║╚═╝
+╚███╔███╔╝██║  ██║██║  ██║██║ ╚████║██║██║ ╚████║╚██████╔╝██╗
+ ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝'''
+__str_error__ = '''\
+███████╗██████╗ ██████╗  ██████╗ ██████╗ ██╗
+██╔════╝██╔══██╗██╔══██╗██╔═══██╗██╔══██╗██║
+█████╗  ██████╔╝██████╔╝██║   ██║██████╔╝██║
+██╔══╝  ██╔══██╗██╔══██╗██║   ██║██╔══██╗╚═╝
+███████╗██║  ██║██║  ██║╚██████╔╝██║  ██║██╗
+╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝'''
 
 __ENV__ = os.environ
 if 'PYTHONPATH' not in __ENV__:
@@ -50,13 +66,7 @@ async def export_inference_graph_async(pipeline_config_path,
         raise ValueError('Variable ${pipeline_config_path} or ${ckpt_prefix}'
                          ' or ${output_dir} not set!')
     if os.path.realpath(pipeline_config_path) == os.path.realpath(output_path):
-        print('''\
-██╗    ██╗ █████╗ ██████╗ ███╗   ██╗██╗███╗   ██╗ ██████╗ ██╗
-██║    ██║██╔══██╗██╔══██╗████╗  ██║██║████╗  ██║██╔════╝ ██║
-██║ █╗ ██║███████║██████╔╝██╔██╗ ██║██║██╔██╗ ██║██║  ███╗██║
-██║███╗██║██╔══██║██╔══██╗██║╚██╗██║██║██║╚██╗██║██║   ██║╚═╝
-╚███╔███╔╝██║  ██║██║  ██║██║ ╚████║██║██║ ╚████║╚██████╔╝██╗
- ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝''')
+        print(__str_warning__)
         print('Using same ${pipeline_config_path} and ${ckpt_prefix} may ruin existing data!')
     __call_str__ = (
             r'python models/research/object_detection/export_inference_graph.py '
