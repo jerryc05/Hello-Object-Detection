@@ -19,7 +19,8 @@ import io
 import os
 import cv2
 from typing import List, Dict, Any
-from utils.log_helper import str_error
+# from utils.log_helper import str_error
+str_error='erroe'
 
 
 async def main():
@@ -92,8 +93,9 @@ async def main():
         #     encoded_img = fid.read()
         # image = PIL.Image.open(io.BytesIO(encoded_img))
         image = cv2.imread(os.path.join(img_path, filename))
-        width, height, _ = image.size
-        encoded_img = cv2.imdecode(image, cv2.IMREAD_COLOR)
+        width, height, _ = image.shape
+        with open(os.path.join(img_path, filename), 'rb') as f:
+            encoded_img = f.read()
 
         filename_b = filename.encode('utf8')
         image_format = filename_b.split(b'.')[-1].lower()
