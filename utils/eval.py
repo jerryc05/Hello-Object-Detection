@@ -92,7 +92,6 @@ class TfObjectDetector(object):
             decode_jpeg = tf.image.decode_jpeg
             read_file = tf.read_file
 
-
         with self.detection_graph.as_default():
             image_decoded: tf.Tensor = decode_jpeg(read_file(filename))
             image = tf.image.resize_images(image_decoded, [self.input_size, self.input_size])

@@ -18,22 +18,15 @@ import csv
 import io
 import os
 import PIL.Image
-import tensorflow as tf
 from typing import List, Dict, Any
-
-try:
-    import object_detection.utils.dataset_util as dataset_util
-except ImportError:
-    print('Cannot import [object_detection.utils.dataset_util]!')
-    print('Did you forget to append [./research] to [PYTHONPATH]?')
-    exit(1)
+from utils.log_helper import str_error
 
 
 async def main():
     arg_parser = argparse.ArgumentParser(description=
-                                         'An asyncio-powered csv to TFRecord parser. '
-                                         'It also generates class ids and the label pbtxt '
-                                         'for you automatically.')
+                                            'An asyncio-powered csv to TFRecord parser. '
+                                            'It also generates class ids and the label pbtxt '
+                                            'for you automatically.')
     arg_parser.add_argument('-c', '--csv', required=True,
                             help='the path to folder containing input csv files.')
     arg_parser.add_argument('-i', '--img', required=True,
@@ -46,11 +39,18 @@ async def main():
 
     csv_path: str = args.csv.strip()
     if not os.path.isfile(csv_path):
-        print(f'WARNING! CSV file not found!')
+        print(f'{str_error}\n CSV file not found!')
         print(f'Please check your csv input path again: [{csv_path}]!')
         exit(1)
+
     img_path: str = args.img.strip()
+
     tfrecord_path: str = args.output.strip()
+    if os.path.isdir(tfrecord_path):
+        print(f'{str_error}\n ${{tfrecord_path}} should be a file path, not folder path!')
+        print(f'Please check your ${{tfrecord_path}} again: [{tfrecord_path}]!')
+        exit(1)
+    print(111)
     if args.label:
         label_path = args.label.strip()
     else:
@@ -78,6 +78,13 @@ async def main():
             tasks.append(asyncio.create_task(csv_to_pbtxt()))
         return 1 + class_list.index(row_label)
 
+    import tensorflow as tf
+    try:
+        import object_detection.utils.dataset_util as dataset_util
+    except ImportError:
+        print('Cannot import [object_detection.utils.dataset_util]!')
+        print('Did you forget to append [./research] to [PYTHONPATH]?')
+        exit(1)
     async def write_box_to_tfrecord(group: Dict[str, Any], tfrecord_writer):
         filename: str = group['filename']
         with tf.gfile.GFile(os.path.join(img_path, filename), 'rb') as fid:
