@@ -17,16 +17,16 @@ import asyncio
 import csv
 import io
 import os
-import PIL.Image
+import cv2
 from typing import List, Dict, Any
 from utils.log_helper import str_error
 
 
 async def main():
     arg_parser = argparse.ArgumentParser(description=
-                                            'An asyncio-powered csv to TFRecord parser. '
-                                            'It also generates class ids and the label pbtxt '
-                                            'for you automatically.')
+                                         'An asyncio-powered csv to TFRecord parser. '
+                                         'It also generates class ids and the label pbtxt '
+                                         'for you automatically.')
     arg_parser.add_argument('-c', '--csv', required=True,
                             help='the path to folder containing input csv files.')
     arg_parser.add_argument('-i', '--img', required=True,
@@ -85,12 +85,15 @@ async def main():
         print('Cannot import [object_detection.utils.dataset_util]!')
         print('Did you forget to append [./research] to [PYTHONPATH]?')
         exit(1)
+
     async def write_box_to_tfrecord(group: Dict[str, Any], tfrecord_writer):
         filename: str = group['filename']
-        with tf.gfile.GFile(os.path.join(img_path, filename), 'rb') as fid:
-            encoded_img = fid.read()
-        image = PIL.Image.open(io.BytesIO(encoded_img))
-        width, height = image.size
+        # with tf.gfile.GFile(os.path.join(img_path, filename), 'rb') as fid:
+        #     encoded_img = fid.read()
+        # image = PIL.Image.open(io.BytesIO(encoded_img))
+        image = cv2.imread(os.path.join(img_path, filename))
+        width, height, _ = image.size
+        encoded_img = cv2.imdecode(image, cv2.IMREAD_COLOR)
 
         filename_b = filename.encode('utf8')
         image_format = filename_b.split(b'.')[-1].lower()

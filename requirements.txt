@@ -4,5 +4,5 @@ Cython
 matplotlib
 numpy
 opencv-python
-pillow
+# pillow
 tensorflow-gpu>=1.4, <2
