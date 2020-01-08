@@ -118,6 +118,9 @@ class TfObjectDetector(object):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        import cv2
+        cv2.destroyAllWindows()
+
         self.__tf_session.__exit__(exc_type, exc_val, exc_tb)
 
     def detect(self, filename):
@@ -180,27 +183,12 @@ class TfObjectDetector(object):
             import numpy as np
             image_restored = resize(image_resized_np, [width, height]).eval().astype(np.uint8)
 
-            # Optional stdout output
-            import os
-            print(os.path.dirname(filename))
-            result = []
-            for i, x in enumerate(scores[0]):
-                result.append({'score': x, 'index': i})
-            from operator import itemgetter
-            result.sort(key=itemgetter('score'), reverse=True)
-            result = [x for x in result if x['score'] * 4 > 1]
-            for x in result:
-                x['name'] = self.__category_index[int(classes[0][x['index']])]["name"]
-                try:
-                    x['box'] = boxes[0][x['index']]
-                except:
-                    x['box'] = []
-                print(f'{x["name"]:30}: {x["score"] * 100:5.03f}% | {x["box"]}')
-
             # Show image to screen
             import cv2
+            import os
             # image_decoded_cv2 = cv2.imread(filename)
-            cv2.namedWindow(TfObjectDetector.__name__, cv2.WINDOW_KEEPRATIO)
+            base_name = os.path.basename(filename)
+            cv2.namedWindow(base_name, cv2.WINDOW_KEEPRATIO)
 
             # width, height, _ = image_decoded_np.shape
             # for x in result:
@@ -214,7 +202,23 @@ class TfObjectDetector(object):
             #                   thickness=1)
 
             # cv2.imshow(TfObjectDetector.__name__, image_decoded_cv2)
-            cv2.imshow(TfObjectDetector.__name__,
-                       cv2.cvtColor(image_restored, cv2.COLOR_BGR2RGB))
+            cv2.imshow(base_name,
+                       cv2.cvtColor(image_restored, cv2.COLOR_RGB2BGR))
+
+            # Optional stdout output
+            print(filename)
+            result = []
+            for i, x in enumerate(scores[0]):
+                result.append({'score': x, 'index': i})
+            from operator import itemgetter
+            result.sort(key=itemgetter('score'), reverse=True)
+            result = [x for x in result if x['score'] * 4 > 1]
+            for x in result:
+                x['name'] = self.__category_index[int(classes[0][x['index']])]["name"]
+                try:
+                    x['box'] = boxes[0][x['index']]
+                except:
+                    x['box'] = []
+                print(f'{x["name"]:30}: {x["score"] * 100:5.15f}%')
+
             cv2.waitKey(0)
-            cv2.destroyAllWindows()
