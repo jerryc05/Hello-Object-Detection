@@ -26,7 +26,7 @@ async def main():
 
         for root, _, files in os.walk(r'data\train2\data'):
             for file in files:
-                detector_sess.detect_from_file(os.path.join(root, file),window_name='')
+                detector_sess.detect_from_file(os.path.join(root, file), window_name='')
 
         # for root, _, files in os.walk(
         #         r'data\PlantVillage-Dataset-master\raw'

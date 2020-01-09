@@ -156,8 +156,12 @@ class TfObjectDetector(object):
             width, height, _ = image_as_f32.shape
             if image_as_f32.dtype != _np.float32:
                 image_as_f32 = image_as_f32.astype(_np.float32, copy=False)
-            image_resized: _np.ndarray = \
-                _cv2.resize(image_as_f32, (input_width, input_height))
+
+            image_resized = image_as_f32
+            if width != input_width and height != input_height:
+                image_resized: _np.ndarray = \
+                    _cv2.resize(image_as_f32, (input_width, input_height),
+                                dst=image_resized)
 
             # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
             image_reshaped = image_resized.reshape((1, input_width, input_height, 3))
@@ -198,8 +202,9 @@ class TfObjectDetector(object):
                 ratio = min(1800 / width, 1000 / height)
                 width = int(width * ratio)
                 height = int(height * ratio)
-                image_labeled = _cv2.resize(image_labeled, (width, height),
-                                            interpolation=_cv2.INTER_LANCZOS4)
+                _cv2.resize(image_labeled, (width, height),
+                            interpolation=_cv2.INTER_LANCZOS4,
+                            dst=image_labeled)
 
             for i in range(len(boxes)):
                 if scores[i] <= threshold:
