@@ -9,7 +9,7 @@ class TfObjectDetector(object):
                  frozen_graph_pb_path: str,
                  label_map_pbtxt_path: str,
                  num_classes=None,
-                 input_size=None,
+                 graph_input_size=None,
                  cpu_only=False):
         import os
         # frozen_graph_pb_path
@@ -44,7 +44,7 @@ class TfObjectDetector(object):
         # placeholder
         self.__detection_graph = None
         self.__input_size = None
-        self.__input_size__ = input_size
+        self.__input_size__ = graph_input_size
         self.__category_index = None
         self.__tf = None
 
@@ -96,7 +96,7 @@ class TfObjectDetector(object):
                                 input_size = (dim[0].size, dim[1].size)
                                 if input(
                                         f'${{input_size}} detected from graph node: '
-                                        f'[{self.__input_size}]!\n'
+                                        f'[{input_size}]!\n'
                                         f'Confirm [Y/n]?'
                                 ).strip().upper() == 'N':
                                     continue
@@ -173,6 +173,10 @@ class TfObjectDetector(object):
                 [boxes, scores, classes, num_detections],
                 feed_dict={image_tensor: image_reshaped}
             )
+            boxes = boxes[0]
+            scores = scores[0]
+            classes = classes[0]
+            print(boxes[:3])
 
             # Visualization of the results of a detection.
             # from object_detection.utils import visualization_utils as vis_util
@@ -181,14 +185,12 @@ class TfObjectDetector(object):
             if image_labeled.dtype != _np.uint8:
                 image_labeled = image_labeled.astype(_np.uint8, copy=False)
 
+            image_labeled = image_labeled[..., ::-1]  # Required by cv2
             if isinstance(converter, _Iterable):
                 for x in converter:
-                    image_labeled = _cv2.cvtColor(image_labeled, x)
+                    _cv2.cvtColor(image_labeled, x, dst=image_labeled)
 
             # Enlarge box
-            boxes = boxes[0]
-            scores = scores[0]
-            classes = classes[0]
             category_index = self.__category_index
 
             # Resize cv2 output
@@ -210,7 +212,6 @@ class TfObjectDetector(object):
                     thickness=1
                 )
 
-                print(f'{category_index[classes[i]]["name"]}: {scores[i] * 100:.4f}%')
                 image_labeled = _cv2.putText(
                     image_labeled,
                     f'{category_index[classes[i]]["name"]}:{scores[i] * 100:.2f}%',
@@ -253,7 +254,7 @@ class TfObjectDetector(object):
                     x['box'] = boxes[x['index']]
                 except:
                     x['box'] = []
-                print(f'{x["name"]}\t: {x["score"] * 100:5.15f}%')
+                print(f'{x["name"]}\t: {x["score"] * 100:5.15f} %')
 
             _cv2.waitKey(1 if no_wait else 0)
 
@@ -269,12 +270,6 @@ class TfObjectDetector(object):
             print(f'{str_error}\n'
                   f'File [{filename} not found]!')
         else:
-            if not isinstance(converter, _Iterable):
-                _converter = [_cv2.COLOR_RGB2BGR]
-            else:
-                _converter = list(converter)
-                _converter.append(_cv2.COLOR_RGB2BGR)
-
             if not isinstance(window_name, str):
                 _window_name = filename
             else:
@@ -282,7 +277,7 @@ class TfObjectDetector(object):
 
             return self.detect_from_ndarray(_cv2.imread(filename)[..., ::-1],
                                             no_wait=no_wait,
-                                            converter=_converter,
+                                            converter=converter,
                                             threshold=threshold,
                                             resize_cv2_output=resize_cv2_output,
                                             window_name=_window_name)
