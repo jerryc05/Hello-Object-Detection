@@ -19,14 +19,14 @@ async def main():
                                       cpu_only=False)
     camera = cv2.VideoCapture(0)
     with detector as detector_sess:
-        # while camera.isOpened():
-        #     _, frame = camera.read()
-        #     cv2.flip(frame, 1, dst=frame)
-        #     detector_sess.detect_from_ndarray(frame[..., ::-1], no_wait=True,threshold=.7)
+        while camera.isOpened():
+            _, frame = camera.read()
+            cv2.flip(frame, 1, dst=frame)
+            detector_sess.detect_from_ndarray(frame[..., ::-1], no_wait=True, threshold=.7)
 
-        for root, _, files in os.walk(r'data\train2\data'):
-            for file in files:
-                detector_sess.detect_from_file(os.path.join(root, file), window_name='')
+        # for root, _, files in os.walk(r'data\train2\data'):
+        #     for file in files:
+        #         detector_sess.detect_from_file(os.path.join(root, file), window_name='')
 
         # for root, _, files in os.walk(
         #         r'data\PlantVillage-Dataset-master\raw'

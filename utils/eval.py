@@ -2,6 +2,7 @@ import cv2 as _cv2
 import numpy as _np
 import os as _os
 from typing import Iterable as _Iterable
+from time import time as _time
 
 
 class TfObjectDetector(object):
@@ -134,6 +135,7 @@ class TfObjectDetector(object):
                             threshold: float = None,
                             resize_cv2_output: bool = None,
                             window_name: str = None):
+        start = _time()
         if not isinstance(threshold, float):
             threshold = .5
         if not isinstance(resize_cv2_output, bool):
@@ -180,10 +182,8 @@ class TfObjectDetector(object):
             boxes = boxes[0]
             scores = scores[0]
             classes = classes[0]
-            print(boxes[:3])
 
             # Visualization of the results of a detection.
-            # from object_detection.utils import visualization_utils as vis_util
 
             image_labeled = np_arr
             if image_labeled.dtype != _np.uint8:
@@ -206,39 +206,41 @@ class TfObjectDetector(object):
                             interpolation=_cv2.INTER_LANCZOS4,
                             dst=image_labeled)
 
-            for i in range(len(boxes)):
-                if scores[i] <= threshold:
-                    continue
-                image_labeled = _cv2.rectangle(
-                    image_labeled,
-                    (int(boxes[i][1] * width), int(boxes[i][0] * height)),
-                    (int(boxes[i][3] * width), int(boxes[i][2] * height)),
-                    color=(266, 43, 138),
-                    thickness=1
-                )
-
-                image_labeled = _cv2.putText(
-                    image_labeled,
-                    f'{category_index[classes[i]]["name"]}:{scores[i] * 100:.2f}%',
-                    (int(boxes[i][1] * width), int(boxes[i][0] * height)),
-                    fontFace=_cv2.FONT_HERSHEY_DUPLEX,
-                    fontScale=1,
-                    color=(266, 43, 138),
-                    thickness=1,
-                    lineType=_cv2.LINE_AA
-                )
+            from object_detection.utils import visualization_utils as vis_util
 
             # Add labels and boxes
-            # vis_util.visualize_boxes_and_labels_on_image_array(
-            #     image_labeled,
-            #     boxes[0],
-            #     classes[0].astype(_np.int32),
-            #     scores[0],
-            #     self.__category_index,
-            #     use_normalized_coordinates=True,
-            #     min_score_thresh=.5,
-            #     line_thickness=1
-            # )
+            vis_util.visualize_boxes_and_labels_on_image_array(
+                image_labeled,
+                boxes,
+                classes.astype(_np.int32, copy=False),
+                scores,
+                category_index,
+                use_normalized_coordinates=True,
+                min_score_thresh=threshold,
+                line_thickness=1
+            )
+
+            # for i in range(len(boxes)):
+            #     if scores[i] <= threshold:
+            #         continue
+            #     image_labeled = _cv2.rectangle(
+            #         image_labeled,
+            #         (int(boxes[i][1] * width), int(boxes[i][0] * height)),
+            #         (int(boxes[i][3] * width), int(boxes[i][2] * height)),
+            #         color=(266, 43, 138),
+            #         thickness=1
+            #     )
+            #
+            #     image_labeled = _cv2.putText(
+            #         image_labeled,
+            #         f'{category_index[classes[i]]["name"]}:{scores[i] * 100:.2f}%',
+            #         (int(boxes[i][1] * width), int(boxes[i][0] * height)),
+            #         fontFace=_cv2.FONT_HERSHEY_DUPLEX,
+            #         fontScale=1,
+            #         color=(266, 43, 138),
+            #         thickness=1,
+            #         lineType=_cv2.LINE_AA
+            #     )
 
             # Show image to screen
             _cv2.namedWindow(window_name, _cv2.WINDOW_KEEPRATIO)
@@ -261,6 +263,7 @@ class TfObjectDetector(object):
                     x['box'] = []
                 print(f'{x["name"]}\t: {x["score"] * 100:5.15f} %')
 
+            print(f'Time elapsed: {_time()-start:.10f}s')
             _cv2.waitKey(1 if no_wait else 0)
 
     def detect_from_file(self, filename: str,
