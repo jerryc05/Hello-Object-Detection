@@ -1,6 +1,6 @@
 import os
 import subprocess
-from utils.log_helper import str_warning
+from .log_helper import str_warning
 
 __exec__ = subprocess.call
 

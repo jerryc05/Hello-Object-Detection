@@ -19,8 +19,7 @@ import io
 import os
 import cv2
 from typing import List, Dict, Any
-# from utils.log_helper import str_error
-str_error='erroe'
+from .log_helper import str_error
 
 
 async def main():
