@@ -1,3 +1,8 @@
+import cv2 as _cv2
+import numpy as _np
+import os as _os
+
+
 class TfObjectDetector(object):
     def __init__(self,
                  frozen_graph_pb_path: str,
@@ -7,12 +12,12 @@ class TfObjectDetector(object):
                  cpu_only=False):
         import os
         # frozen_graph_pb_path
-        if not os.path.isfile(frozen_graph_pb_path):
+        if not _os.path.isfile(frozen_graph_pb_path):
             raise FileNotFoundError(f'File [{frozen_graph_pb_path}] not found!')
         self.__frozen_graph_pb_path = frozen_graph_pb_path
 
         # label_map_pbtxt_path
-        if not os.path.isfile(label_map_pbtxt_path):
+        if not _os.path.isfile(label_map_pbtxt_path):
             raise FileNotFoundError(f'File [{label_map_pbtxt_path}] not found!')
         self.__label_map_pbtxt_path = label_map_pbtxt_path
 
@@ -33,8 +38,7 @@ class TfObjectDetector(object):
 
         assert isinstance(cpu_only, bool)
         if cpu_only:
-            import os
-            os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+            _os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 
         # placeholder
         self.__detection_graph = None
@@ -43,7 +47,7 @@ class TfObjectDetector(object):
         self.__category_index = None
         self.__tf = None
 
-    # noinspection PyPep8Naming,PyUnresolvedReferences
+    # noinspection PyPep8Naming,PyUnresolvedReferences,PyBroadException
     def __enter__(self):
         import tensorflow as tf
         from object_detection.utils import label_map_util
@@ -53,8 +57,9 @@ class TfObjectDetector(object):
         self.__category_index = label_map_util.create_category_index(categories)
 
         self.__tf = tf
-        self.__detection_graph = tf.Graph()
-        with self.__detection_graph.as_default():
+        detection_graph = tf.Graph()
+        self.__detection_graph = detection_graph
+        with detection_graph.as_default():
             try:
                 TfGraphDef = tf.compat.v1.GraphDef
                 TfGFile = tf.io.gfile.GFile
@@ -69,26 +74,25 @@ class TfObjectDetector(object):
 
             # input_size parsing
             __input_size__ = self.__input_size__
+            input_size: tuple
             if isinstance(__input_size__, int):
-                self.__input_size = (__input_size__, __input_size__)
+                input_size = (__input_size__, __input_size__)
             elif (isinstance(__input_size__, tuple) and
                   isinstance(__input_size__[0], int) and
                   isinstance(__input_size__[1], int)):
-                self.__input_size = __input_size__
+                input_size = __input_size__
             else:
                 import re
 
                 print(f'${{input_size}} not found! Trying auto detection...')
                 pattern = re.compile('^Preprocessor/map/[A-Za-z]+(:?/.*)*$')
 
-                # placeholder
-                self.__input_size = None
                 for node in graph_def.node:
                     try:
                         if pattern.search(node.name):
                             dim = node.attr['element_shape'].shape.dim
                             if dim:
-                                self.__input_size = (dim[0].size, dim[1].size)
+                                input_size = (dim[0].size, dim[1].size)
                                 if input(
                                         f'${{input_size}} detected from graph node: '
                                         f'[{self.__input_size}]!\n'
@@ -99,9 +103,10 @@ class TfObjectDetector(object):
                                     break
                     except:
                         pass
-                if self.__input_size is None:
-                    self.__input_size = input('Width = '), input('Height = ')
-                print(f'Now ${{input_size}} = [{self.__input_size}]!')
+                if input_size is None:
+                    input_size = input('Width = '), input('Height = ')
+            self.__input_size = input_size
+            print(f'${{input_size}} = [{input_size}]!')
             del __input_size__
             del self.__input_size__
 
@@ -112,18 +117,19 @@ class TfObjectDetector(object):
             Session = tf.compat.v1.Session
         except AttributeError:
             Session = tf.Session
-        self.__tf_session = Session(graph=self.__detection_graph)
-        self.__tf_session.__enter__()
+        tf_session = Session(graph=self.__detection_graph)
+        self.__tf_session = tf_session
+        tf_session.__enter__()
         print('Tensorflow session initialized successfully!'.center(90, '='))
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        import cv2
-        cv2.destroyAllWindows()
-
+        _cv2.destroyAllWindows()
         self.__tf_session.__exit__(exc_type, exc_val, exc_tb)
 
-    def detect(self, filename):
+    def detect_from_file(self, filename: str, no_wait=False):
+        assert isinstance(no_wait, bool)
+
         detection_graph = self.__detection_graph
         if detection_graph is None:
             import utils.log_helper
@@ -132,22 +138,15 @@ class TfObjectDetector(object):
                   'Please run detection under "with" block!')
             exit(1)
         with detection_graph.as_default():
-            tf = self.__tf
-
-            try:
-                decode_jpeg = tf.io.decode_jpeg
-                read_file = tf.io.read_file
-                resize = tf.image.resize
-            except AttributeError:
-                decode_jpeg = tf.image.decode_jpeg
-                read_file = tf.read_file
-                resize = tf.image.resize_images
-            image_decoded: tf.Tensor = decode_jpeg(read_file(filename))
-            image_resized = resize(image_decoded, [self.__input_size[0], self.__input_size[1]])
+            input_width, input_height = self.__input_size
+            image_decoded = _cv2.imread(filename, _cv2.COLOR_BGR2RGB)
+            width, height, _ = image_decoded.shape
+            image_resized: _np.ndarray = _cv2.resize(image_decoded,
+                                                     (input_width, input_height))
 
             # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
-            image_reshaped = tf.reshape(
-                image_resized, [1, self.__input_size[0], self.__input_size[1], 3])
+            image_reshaped = image_resized
+            image_reshaped.shape = (1, input_width, input_height, 3)
 
             image_tensor = detection_graph.get_tensor_by_name('image_tensor:0')
             boxes = detection_graph.get_tensor_by_name('detection_boxes:0')
@@ -158,37 +157,39 @@ class TfObjectDetector(object):
             # Actual detection.
             boxes, scores, classes, num_detections = self.__tf_session.run(
                 [boxes, scores, classes, num_detections],
-                feed_dict={image_tensor: (image_reshaped.eval())}
+                feed_dict={image_tensor: image_reshaped}
             )
 
             # Visualization of the results of a detection.
             from object_detection.utils import visualization_utils as vis_util
-            import numpy as np
 
             # Add labels and boxes
-            image_resized_np = image_resized.eval()
+            image_labeled = image_reshaped
+            image_labeled.shape = (input_width, input_height, 3)
             vis_util.visualize_boxes_and_labels_on_image_array(
-                image_resized_np,
-                np.squeeze(boxes),
-                np.squeeze(classes).astype(np.int32),
-                np.squeeze(scores),
+                image_labeled,
+                _np.squeeze(boxes),
+                _np.squeeze(classes).astype(_np.int32),
+                _np.squeeze(scores),
                 self.__category_index,
                 use_normalized_coordinates=True,
                 line_thickness=4
             )
 
             # Visualization postprocessing
-            width, height, _ = tf.shape(image_decoded).eval()
+            image_restored = image_reshaped
+            image_restored: _np.ndarray = _cv2.resize(image_restored, (width, height),
+                                                      interpolation=_cv2.INTER_LANCZOS4)
+            image_restored[:] = image_restored.view(_np.uint8)
 
-            import numpy as np
-            image_restored = resize(image_resized_np, [width, height]).eval().astype(np.uint8)
+            # width, height, _ = tf.shape(image_decoded).eval()
+
+            # image_restored = resize(image_resized_np, [width, height]).eval().astype(_np.uint8)
 
             # Show image to screen
-            import cv2
-            import os
             # image_decoded_cv2 = cv2.imread(filename)
-            base_name = os.path.basename(filename)
-            cv2.namedWindow(base_name, cv2.WINDOW_KEEPRATIO)
+            base_name = _os.path.basename(filename)
+            _cv2.namedWindow(base_name, _cv2.WINDOW_KEEPRATIO)
 
             # width, height, _ = image_decoded_np.shape
             # for x in result:
@@ -202,11 +203,12 @@ class TfObjectDetector(object):
             #                   thickness=1)
 
             # cv2.imshow(TfObjectDetector.__name__, image_decoded_cv2)
-            cv2.imshow(base_name,
-                       cv2.cvtColor(image_restored, cv2.COLOR_RGB2BGR))
+            _cv2.imshow(base_name, image_restored)
+            # _cv2.cvtColor(, _cv2.COLOR_RGB2BGR))
 
             # Optional stdout output
-            print(filename)
+            print()
+            print(filename.center(90, '='))
             result = []
             for i, x in enumerate(scores[0]):
                 result.append({'score': x, 'index': i})
@@ -219,6 +221,124 @@ class TfObjectDetector(object):
                     x['box'] = boxes[0][x['index']]
                 except:
                     x['box'] = []
-                print(f'{x["name"]:30}: {x["score"] * 100:5.15f}%')
+                print(f'{x["name"]}\t: {x["score"] * 100:5.15f}%')
 
-            cv2.waitKey(0)
+            _cv2.waitKey(1 if no_wait else 0)
+
+    def detect_from_np(self, np_arr: _np.ndarray, no_wait=False, converter=None):
+        if converter is None:
+            converter = []
+        assert isinstance(no_wait, bool)
+
+        detection_graph = self.__detection_graph
+        if detection_graph is None:
+            import utils.log_helper
+
+            print(f'{utils.log_helper.str_error}\n'
+                  'Please run detection under "with" block!')
+            exit(1)
+        with detection_graph.as_default():
+            tf = self.__tf
+
+            try:
+                # decode_jpeg = tf.io.decode_jpeg
+                # read_file = tf.io.read_file
+                resize = tf.image.resize
+            except AttributeError:
+                # decode_jpeg = tf.image.decode_jpeg
+                # read_file = tf.read_file
+                resize = tf.image.resize_images
+            image_decoded: tf.Tensor = tf.convert_to_tensor(np_arr)
+            image_resized = resize(image_decoded, [self.__input_size[0], self.__input_size[1]])
+
+            # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
+            image_reshaped = tf.reshape(
+                image_resized, [1, self.__input_size[0], self.__input_size[1], 3])
+
+            image_tensor = detection_graph.get_tensor_by_name('image_tensor:0')
+            boxes = detection_graph.get_tensor_by_name('detection_boxes:0')
+            scores = detection_graph.get_tensor_by_name('detection_scores:0')
+            classes = detection_graph.get_tensor_by_name('detection_classes:0')
+            num_detections = detection_graph.get_tensor_by_name('num_detections:0')
+
+            # Actual detection.
+            from time import time
+            s1 = time()
+            boxes, scores, classes, num_detections = self.__tf_session.run(
+                [boxes, scores, classes, num_detections],
+                feed_dict={image_tensor: (image_reshaped.eval())}
+            )
+
+            # Visualization of the results of a detection.
+            s2 = time()
+            from object_detection.utils import visualization_utils as vis_util
+
+            # Add labels and boxes
+            image_labeled_np: _np.ndarray = image_resized.eval()
+            vis_util.visualize_boxes_and_labels_on_image_array(
+                image_labeled_np,
+                _np.squeeze(boxes),
+                _np.squeeze(classes).astype(_np.int32),
+                _np.squeeze(scores),
+                self.__category_index,
+                use_normalized_coordinates=True,
+                line_thickness=4
+            )
+            s3 = time()
+
+            # Visualization postprocessing
+            width, height, _ = np_arr.shape
+            image_restored_np: _np.ndarray = _cv2.resize(image_labeled_np,
+                                                         (width, height),
+                                                         interpolation=_cv2.INTER_LANCZOS4)
+            image_restored_np = image_restored_np.astype(_np.uint8)
+            # image_restored = resize(image_resized_np, [])
+            # image_restored = tf.cast(image_restored, tf.uint8).eval()
+            s4 = time()
+
+            # Show image to screen
+            # image_decoded_cv2 = cv2.imread(filename)
+            base_name = f'RAW ND-ARRAY SOURCE'
+            _cv2.namedWindow(base_name, _cv2.WINDOW_KEEPRATIO)
+
+            # width, height, _ = image_decoded_np.shape
+            # for x in result:
+            #     x1 = int(x['box'][0] * (width))  # /self.input_size[0]))
+            #     y1 = int(x['box'][1] * (height))  # /self.input_size[1]))
+            #     x2 = int(x['box'][2] * (width))  # /self.input_size[0]))
+            #     y2 = int(x['box'][3] * (height))  # /self.input_size[1] ))
+            #     print(x1, y1, x2, y2)
+            #     cv2.rectangle(image_decoded_cv2, (x1, y1), (x2, y2),
+            #                   color=(17, 17, 255),
+            #                   thickness=1)
+
+            # cv2.imshow(TfObjectDetector.__name__, image_decoded_cv2)
+            if isinstance(converter, list) or isinstance(converter, tuple):
+                for x in converter:
+                    image_restored_np = _cv2.cvtColor(image_restored_np, x)
+            _cv2.imshow(base_name, image_restored_np)
+
+            # Optional stdout output
+            print()
+            print(base_name.center(90, '='))
+            result = []
+            for i, x in enumerate(scores[0]):
+                result.append({'score': x, 'index': i})
+            from operator import itemgetter
+            result.sort(key=itemgetter('score'), reverse=True)
+            result = [x for x in result if x['score'] * 4 > 1]
+            for x in result:
+                x['name'] = self.__category_index[int(classes[0][x['index']])]["name"]
+                try:
+                    x['box'] = boxes[0][x['index']]
+                except:
+                    x['box'] = []
+                print(f'{x["name"]}\t: {x["score"] * 100:5.15f}%')
+
+            _cv2.waitKey(1 if no_wait else 0)
+            s5 = time()
+            print(f's1->s2: {s2 - s1}')
+            print(f's3->s2: {s3 - s2}')
+            print(f's4->s3: {s4 - s3}')
+            print(f's5->s4: {s5 - s4}')
+            # print(f's4->s3: {s4-s3}')
