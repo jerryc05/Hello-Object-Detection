@@ -12,7 +12,6 @@ class TfObjectDetector(object):
                  num_classes=None,
                  graph_input_size=None,
                  cpu_only=False):
-        import os
         # frozen_graph_pb_path
         if not _os.path.isfile(frozen_graph_pb_path):
             raise FileNotFoundError(f'File [{frozen_graph_pb_path}] not found!')
@@ -122,7 +121,7 @@ class TfObjectDetector(object):
         tf_session = Session(graph=self.__detection_graph)
         self.__tf_session = tf_session
         tf_session.__enter__()
-        print('Tensorflow session initialized successfully!'.center(90, '='))
+        print('Tensorflow session initialized successfully!'.center(90, '·'))
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -206,9 +205,11 @@ class TfObjectDetector(object):
                             interpolation=_cv2.INTER_LANCZOS4,
                             dst=image_labeled)
 
-            from object_detection.utils import visualization_utils as vis_util
-
             # Add labels and boxes
+            if not 'vis_util' in locals():
+                from object_detection.utils import visualization_utils as vis_util
+
+            # noinspection PyUnboundLocalVariable
             vis_util.visualize_boxes_and_labels_on_image_array(
                 image_labeled,
                 boxes,
@@ -248,7 +249,7 @@ class TfObjectDetector(object):
 
             # Optional stdout output
             print()
-            print(window_name.center(90, '='))
+            print(window_name.center(90, '·'))
             result = []
             for i, x in enumerate(scores):
                 result.append({'score': x, 'index': i})
