@@ -293,3 +293,52 @@ class TfObjectDetector(object):
                                             threshold=threshold,
                                             resize_cv2_output=resize_cv2_output,
                                             window_name=_window_name)
+
+    def category_index(self):
+        return self.__category_index
+
+    def _detect(self, np_arr: _np.ndarray,
+                window_name: str = None):
+        if not isinstance(window_name, str):
+            window_name = 'TfObjectDetector'
+
+        detection_graph = self.__detection_graph
+        if detection_graph is None:
+            import utils.log_helper
+
+            print(f'{utils.log_helper.str_error}\n'
+                  'Please run detection under "with" block!')
+            exit(1)
+        with detection_graph.as_default():
+            print()
+            print(window_name.center(90, '·'))
+
+            input_width, input_height = self.__input_size
+            image_as_f32 = np_arr
+            width, height, _ = image_as_f32.shape
+            if image_as_f32.dtype != _np.float32:
+                image_as_f32 = image_as_f32.astype(_np.float32, copy=False)
+
+            image_resized = image_as_f32
+            if width != input_width and height != input_height:
+                image_resized: _np.ndarray = \
+                    _cv2.resize(image_as_f32, (input_width, input_height))
+
+            # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
+            image_reshaped = image_resized.reshape((1, input_width, input_height, 3))
+
+            image_tensor = detection_graph.get_tensor_by_name('image_tensor:0')
+            boxes = detection_graph.get_tensor_by_name('detection_boxes:0')
+            scores = detection_graph.get_tensor_by_name('detection_scores:0')
+            classes = detection_graph.get_tensor_by_name('detection_classes:0')
+            num_detections = detection_graph.get_tensor_by_name('num_detections:0')
+
+            # Actual detection.
+            boxes, scores, classes, num_detections = self.__tf_session.run(
+                [boxes, scores, classes, num_detections],
+                feed_dict={image_tensor: image_reshaped}
+            )
+            boxes = boxes[0]
+            scores = scores[0]
+            classes = classes[0].astype(_np.int32, copy=False)
+            return boxes, scores, classes
