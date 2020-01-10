@@ -239,7 +239,7 @@ class TfObjectDetector(object):
             #
             #     image_labeled = _cv2.putText(
             #         image_labeled,
-            #         f'{category_index[classes[i]]["name"]}:{scores[i] * 100:.2f}%',
+            #         f'{category_index[classes[i]]["name"]}:{scores[i]:.2%}',
             #         (x1, y1),
             #         fontFace=_cv2.FONT_HERSHEY_DUPLEX,
             #         fontScale=1,
@@ -265,9 +265,9 @@ class TfObjectDetector(object):
                     x['box'] = boxes[x['index']]
                 except:
                     x['box'] = []
-                print(f'{x["name"]}\t: {x["score"] * 100:5.15f} %')
+                print(f'{x["name"]}\t: {x["score"]:.15%}')
 
-            print(f'Time elapsed: {_time() - start:.10f}s')
+            print(f'\nTime elapsed\t: {(_time() - start) * 1000:20.15f}\tms')
             _cv2.waitKey(1 if no_wait else 0)
 
     def detect_from_file(self, filename: str,
