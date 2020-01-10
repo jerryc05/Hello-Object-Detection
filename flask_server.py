@@ -30,12 +30,11 @@ with TfObjectDetector('config/infer/frozen_inference_graph.pb',
 
     @app.route('/plant', methods=('POST',))
     def plant():
-        data: str = request.json["data"]
-        width = int(request.json["width"])
-        height = int(request.json["height"])
+        data = request.json
         if not data:
             return abort(400)
         data2: _np.ndarray = _np.array(data)
+        width, height, _ = data2.shape
         print(data2.shape)
         data2 = data2.reshape((width, height, 3))
         boxes, scores, classes = detect_sess._detect(data2)  # _cv2.imread(filename)[..., ::-1])
