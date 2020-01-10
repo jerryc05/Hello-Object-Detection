@@ -152,6 +152,9 @@ class TfObjectDetector(object):
                   'Please run detection under "with" block!')
             exit(1)
         with detection_graph.as_default():
+            print()
+            print(window_name.center(90, '·'))
+
             input_width, input_height = self.__input_size
             image_as_f32 = np_arr
             width, height, _ = image_as_f32.shape
@@ -161,8 +164,7 @@ class TfObjectDetector(object):
             image_resized = image_as_f32
             if width != input_width and height != input_height:
                 image_resized: _np.ndarray = \
-                    _cv2.resize(image_as_f32, (input_width, input_height),
-                                dst=image_resized)
+                    _cv2.resize(image_as_f32, (input_width, input_height))
 
             # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
             image_reshaped = image_resized.reshape((1, input_width, input_height, 3))
@@ -180,11 +182,10 @@ class TfObjectDetector(object):
             )
             boxes = boxes[0]
             scores = scores[0]
-            classes = classes[0]
+            classes = classes[0].astype(_np.int32, copy=False)
 
             # Visualization of the results of a detection.
-
-            image_labeled = np_arr
+            image_labeled: _np.ndarray = np_arr
             if image_labeled.dtype != _np.uint8:
                 image_labeled = image_labeled.astype(_np.uint8, copy=False)
 
@@ -193,7 +194,6 @@ class TfObjectDetector(object):
                 for x in converter:
                     _cv2.cvtColor(image_labeled, x, dst=image_labeled)
 
-            # Enlarge box
             category_index = self.__category_index
 
             # Resize cv2 output
@@ -201,19 +201,19 @@ class TfObjectDetector(object):
                 ratio = min(1800 / width, 1000 / height)
                 width = int(width * ratio)
                 height = int(height * ratio)
-                _cv2.resize(image_labeled, (width, height),
-                            interpolation=_cv2.INTER_LANCZOS4,
-                            dst=image_labeled)
+                image_labeled = _cv2.resize(image_labeled, (width, height),
+                                            interpolation=_cv2.INTER_LANCZOS4)
+                print(f'Image size adjusted to [{image_labeled.shape}]!')
 
             # Add labels and boxes
-            if not 'vis_util' in locals():
+            if 'vis_util' not in locals():
                 from object_detection.utils import visualization_utils as vis_util
 
             # noinspection PyUnboundLocalVariable
             vis_util.visualize_boxes_and_labels_on_image_array(
                 image_labeled,
                 boxes,
-                classes.astype(_np.int32, copy=False),
+                classes,
                 scores,
                 category_index,
                 use_normalized_coordinates=True,
@@ -224,10 +224,15 @@ class TfObjectDetector(object):
             # for i in range(len(boxes)):
             #     if scores[i] <= threshold:
             #         continue
+            #     x1 = int(boxes[i][1] * width)
+            #     y1 = int(boxes[i][0] * height)
+            #     x4 = int(boxes[i][3] * width)
+            #     y4 = int(boxes[i][2] * height)
+            #     # print(f'box = ({x1},{y1}), ({x4},{y4})!')
             #     image_labeled = _cv2.rectangle(
             #         image_labeled,
-            #         (int(boxes[i][1] * width), int(boxes[i][0] * height)),
-            #         (int(boxes[i][3] * width), int(boxes[i][2] * height)),
+            #         (x1, y1),
+            #         (x4, y4),
             #         color=(266, 43, 138),
             #         thickness=1
             #     )
@@ -235,7 +240,7 @@ class TfObjectDetector(object):
             #     image_labeled = _cv2.putText(
             #         image_labeled,
             #         f'{category_index[classes[i]]["name"]}:{scores[i] * 100:.2f}%',
-            #         (int(boxes[i][1] * width), int(boxes[i][0] * height)),
+            #         (x1, y1),
             #         fontFace=_cv2.FONT_HERSHEY_DUPLEX,
             #         fontScale=1,
             #         color=(266, 43, 138),
@@ -244,12 +249,10 @@ class TfObjectDetector(object):
             #     )
 
             # Show image to screen
-            _cv2.namedWindow(window_name, _cv2.WINDOW_KEEPRATIO)
+            # _cv2.namedWindow(window_name, _cv2.WINDOW_KEEPRATIO)
             _cv2.imshow(window_name, image_labeled)
 
             # Optional stdout output
-            print()
-            print(window_name.center(90, '·'))
             result = []
             for i, x in enumerate(scores):
                 result.append({'score': x, 'index': i})
@@ -264,7 +267,7 @@ class TfObjectDetector(object):
                     x['box'] = []
                 print(f'{x["name"]}\t: {x["score"] * 100:5.15f} %')
 
-            print(f'Time elapsed: {_time()-start:.10f}s')
+            print(f'Time elapsed: {_time() - start:.10f}s')
             _cv2.waitKey(1 if no_wait else 0)
 
     def detect_from_file(self, filename: str,
