@@ -5,4 +5,4 @@ matplotlib
 numpy
 opencv-python
 # pillow
-tensorflow-gpu>=1.4, <2
+tensorflow-gpu>=1.15.1, <2
